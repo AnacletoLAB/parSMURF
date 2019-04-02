@@ -22,6 +22,10 @@ This package contains parSMURF, a High Performance Computing imbalance-aware mac
 		<a href="#params">params</a>
 		<a href="#autogp_params">autogp_params</a>
 <a href="#Data-format">Data Format</a>
+	<a href="#Data-file">Data file format</a>
+	<a href="#Label-file">Label file format</a>
+	<a href="#Fold-file">Fold file format</a>
+	<a href="#Output-file">Output file format</a>
 <a href="#Random-dataset-generation">Random dataset generation</a>
 <a href="#Examples">Examples</a>
 <a href="#Licensa">License</a>
@@ -30,10 +34,11 @@ This package contains parSMURF, a High Performance Computing imbalance-aware mac
 ### Overview
 parSMURF is a fast and scalable C++ implementation of the HyperSMURF algorithm - hyper-ensemble of SMOTE Undersampled Random Forests - an ensemble approach explicitly designed to deal with the huge imbalance between deleterious and neutral variants.
 
-The algorithm is outlined in the following papers:
-A. Petrini, M. Mesiti, M. Schubach, M. Frasca, D. Danis, M. Re, G. Grossi, T. Castrignanò, P. N. Robinson and G. Valentini, "parSMURF, a High Performance Computing tool for the genome-wide detection of pathogenic variants OR parSMURF, a High Performance Computing tool for supervised big data analysis in Genomic Medicine", <TBD>
+The algorithm is outlined in the following papers:\
+A. Petrini, M. Mesiti, M. Schubach, M. Frasca, D. Danis, M. Re, G. Grossi, T. Castrignanò, P. N. Robinson and G. Valentini, "parSMURF, a High Performance Computing tool for the genome-wide detection of pathogenic variants OR parSMURF, a High Performance Computing tool for supervised big data analysis in Genomic Medicine"\
+<TBD>
 
-Schubach, Matteo Re, Peter N. Robinson & Giorgio Valentini, "Imbalance-Aware Machine Learning for Predicting Rare and Common Disease-Associated Non-Coding Variants", Scientific Reports, 2017/06/07
+Schubach, Matteo Re, Peter N. Robinson & Giorgio Valentini, "Imbalance-Aware Machine Learning for Predicting Rare and Common Disease-Associated Non-Coding Variants", Scientific Reports, 2017/06/07\
 https://www.nature.com/articles/s41598-017-03011-5
 
 Two variants of parSMURF are currently available in this repository:
@@ -48,10 +53,10 @@ Both versions share the same design and functionalities outlined in the paper, i
 
 ### Requirements
 
-parSMURF is designed for x86-64 and Intel Xeon Phi architectures running Linux OSes.
+parSMURF is designed for x86-64 and Intel Xeon Phi architectures running Linux OSes.\
 This software is distributed as source code.
 
-A compilier which supports the C++11 language specification is required. It has been tested with GCC (vers. >= 5) and Intel CC (2015, 2017 and 2019).
+A compilier which supports the C++11 language specification is required. It has been tested with GCC (vers. >= 5) and Intel CC (2015, 2017 and 2019).\
 Code is also optimized for Intel XeonPhi architectures, and it has been successfully tested on Knights Landing family processors.
 
 Multithreading and multiprocessing are managed differently in parSMURF1 and parSMURFn: the former is a multithread-only implementation and thread management is performed through OpenMP APIs. Any reasonably recent compiler has its specification already built-in, hence this requirement is usually met. parSMURFn, instead, is a multiprocess and multithread implementation of the algorithm. Thread management is performed by the Linux built-in pthread library and multiprocessing is performed through the MPI APIs.  Hence, for compilation and running, parSMURFn requires an implementation of the MPI standard. It has been tested with OpenMPI 1.10.3, OpenMPI 2.0, IntelMPI 2016, IntelMPI 2017 and IntelMPI 2019.
@@ -88,6 +93,7 @@ parSMURF uses several external libraries that are included ad source code in thi
 The following libraries are not included in this code repository, but are automatically downloaded during the compilation process:
 - easylogging++: A single header C++ logging library, by Zuhd Web Services. Automatically cloned in src/easyloggingpp and compiled from https://github.com/zuhd-org/easyloggingpp
 - jsoncons: A C++, header-only library for constructing JSON and JSON-like text and binary data formats, by Daniel Parker. Automatically cloned in src/jsoncons and compiled from https://github.com/danielaparker/jsoncons
+- zlib: A massively spiffy yet delicately unobtrusive compression library, by Jean-loup Gailly and Mark Adler. Autmatically cloned from in src/zlib and compiled from https://github.com/madler/zlib
 
 All the libraries have been modified and redistributed according to their own licenses. For each included library, a copy of the associated license is contained in each library folder.
 
@@ -160,12 +166,12 @@ Both strategies are performed in a context of internal cross validation, hence i
 The output of the procedure is the set of best learning parameter for each fold of the external cross validation.
 
 ### Running parSMURF
-parSMURF is a command line executable.
+parSMURF is a command line executable.\
 All the options are submitted to the main executable through configuration file written in json format.
 
 #### Command line options
-Only two command line options are available, since every other parameter or option is defined by json configuration files.
-`--cfg <filename>` specifies the configuration file for the run
+Only two command line options are available, since every other parameter or option is defined by json configuration files.\
+`--cfg <filename>` specifies the configuration file for the run\
 `--help` prints a brief help screen
 
 #### Running parSMURF1
@@ -175,21 +181,21 @@ parSMURF1 does not require anything special to run, besides a proper configurati
 ```
 
 #### Running parSMURFn
-parSMURFn requires MPI to be installed on the target system or in all the nodes of a cluster. It must be invoked with `mpirun` or, depending on the scheduling system installed on the cluster, with a proper mpirun wrapper.
+parSMURFn requires MPI to be installed on the target system or in all the nodes of a cluster. It must be invoked with `mpirun` or, depending on the scheduling system installed on the cluster, with a proper mpirun wrapper.\
 The `-n` option of `mpirun` also specifies how many processes have to be launched. parSMURFn requires at least two processes, one as master and one as worker. As an example:
 ```
 mpirun -n 5 ./parSMURFn --cfg <configFile.json>
 ```
-launches an instance of parSMURFn over 5 processes (one master and four worker).
+launches an instance of parSMURFn over 5 processes (one master and four worker).\
 As now, the number of master process is limited to one.
 
 #### Running the Bayesian optimizer
-Using the Bayesian optimizer requires more effort, but we are currently finding a way to properly manage the whole procedure more user friendly.
-As noted in the "Requirements" section, it may be preferable to setup a Python virtual environment and launch parSMURF1 or parSMURFn from there.
-Also, the entire `src/spearmint` folder must be copied in the same directory where the parSMURF executable is.
-As final requirement, the environmental variable PYTHONPATH must contain the path to the Spearmint folder.
+Using the Bayesian optimizer requires more effort, but we are currently finding a way to properly manage the whole procedure more user friendly.\
+As noted in the "Requirements" section, it may be preferable to setup a Python virtual environment and launch parSMURF1 or parSMURFn from there.\
+Also, the entire `src/spearmint` folder must be copied in the same directory where the parSMURF executable is.\
+As final requirement, the environmental variable PYTHONPATH must contain the path to the Spearmint folder.\
 
-As an example, assume that the git repository has been copied to `/home/user01/git/parSMURF` and the package has been successfully compiled in the `/home/user01/git/parSMURF/build` directory. Also, assume that a Python virtual environment has been created and is located at `/home/user01/pythonVenvs/parSMURFvenv`.
+As an example, assume that the git repository has been copied to `/home/user01/git/parSMURF` and the package has been successfully compiled in the `/home/user01/git/parSMURF/build` directory. Also, assume that a Python virtual environment has been created and is located at `/home/user01/pythonVenvs/parSMURFvenv`.\
 To prepare a folder containing everything it is needed to parSMURF to run, do the following:
 ```
 mkdir /home/user01/parSMURFexp
@@ -209,7 +215,7 @@ deactivate
 
 #### Configuration file
 
-parSMURF1 and parSMURFn use configuration files in json format for setting the parameters of each run.
+parSMURF1 and parSMURFn use configuration files in json format for setting the parameters of each run.\
 Examples of configuration files are available in the cfgEx folder of the repository.
 
 A configuration file is composed by seven dictionaries:
@@ -255,12 +261,14 @@ Mandatory: yes\
 Exec: parSMURF1 / parSMURFn\
 General configuration of the run.
 
+
 ```
 	"name": string
 ```
 Mandatory: No\
 Exec: parSMURF1 / parSMURFn\
 Label used for marking the name of the executable (parSMURF1 or parSMURFn). It does not affect the computation itself, since this field is ignored by the json parser
+
 
 ```
 	"nProcs": int
@@ -269,12 +277,14 @@ Mandatory: No\
 Exec: parSMURFn\
 Label used for marking the number of processes for a run of parSMURFn. It does not affect the computation itself, since the total number of processes is detected at runtime by the MPI APIs.
 
+
 ```
 	"ensThrd": int
 ```
 Mandatory: Yes\
 Exec: parSMURF1 / parSMURFn\
 Number of threads assigned to perform the partition processing.
+
 
 ```
 	"rfThrd": int
@@ -283,12 +293,14 @@ Mandatory: Yes\
 Exec: parSMURF1 / parSMURFn\
 Number of threads assigned to perform the random forest train and test.
 
+
 ```
 	"noMtSender": bool
 ```
 Mandatory: No\
 Exec: parSMURFn\
 This option disables multithreading in the master process. It may affect performances, but it may be necessary when processing particularly large datasets.
+
 
 ```
 	"seed": int
@@ -297,12 +309,14 @@ Mandatory: No\
 Exec: parSMURF1 / parSMURFn\
 Optional seed for the random number generators. If unspecified, a random seed is generated.
 
+
 ```
 	"verboseLevel": int
 ```
 Mandatory: No\
 Exec: parSMURF1 / parSMURFn\
 Level of verbosity on stdout and on the logfile of the computational task. Range is 0-3 (default: 0).
+
 
 ```
 	"verboseMPI": bool
@@ -311,12 +325,14 @@ Mandatory: No\
 Exec: parSMURFn\
 Verbose on stdout and logfile the calls to MPI APIs. (Default: false)
 
+
 ```
 	"saveTime": bool
 ```
 Mandatory: No\
 Exec: parSMURF1 / parSMURFn\
 Option for saving a report of the computation time of the run (Default: false)
+
 
 ```
 	"timeFile": string
@@ -325,12 +341,14 @@ Mandatory: Yes, if "saveTime" is set to true\
 Exec: parSMURF1 / parSMURFn\
 File name for saving the execution time report
 
+
 ```
 	"printCfg": bool
 ```
 Mandatory: No\
 Exec: parSMURF1 / parSMURFn\
 Option for printing a detailed description of the run before it starts (Default: false)
+
 
 ```
 	"mode": string
@@ -343,6 +361,7 @@ Execution mode. Allowed strings are:\
 "test": The whole dataset is treated as test set. It is mandatory to submit a directory of trained models to perform the evaluation. The run returns a set of predictions.\
 Note that the autotuning of the learning parameters is available only for "cv" mode
 
+
 ```
 	"optimizer": string
 ```
@@ -352,6 +371,7 @@ Execution mode. Allowed strings are:\
 "no": external cross-validation only (default)\
 "grid": automatic tuning of the learning parameters by grid search in the internal cross validation loop\
 "autogp": automatic tuning of the learning parameters by Bayesian optimization (Gaussian process) in the internal cross validation loop
+
 
 ##### "data"
 ```
@@ -367,12 +387,14 @@ Mandatory: yes\
 Exec: parSMURF1 / parSMURFn\
 This field contains all the required information for accessing data from and to the system.
 
+
 ```
 	"dataFile": string
 ```
 Mandatory: Yes (No if simulation mode is enabled)\
 Exec: parSMURF1 / parSMURFn\
 Input data file
+
 
 ```
 	"foldFile": string
@@ -381,12 +403,14 @@ Mandatory: No\
 Exec: parSMURF1 / parSMURFn\
 Optional input file containing the fold division of the dataset
 
+
 ```
 	"labelFile": string
 ```
 Mandatory: Yes (No, if simulation mode is enabled)\
 Exec: parSMURF1 / parSMURFn\
 Input file containing the labels of the examples of the dataset
+
 
 ```
 	"outFile": string
@@ -395,12 +419,14 @@ Mandatory: Yes (No, if in train mode)\
 Exec: parSMURF1 / parSMURFn\
 Output file containing the output predictions
 
+
 ```
 	"forestDir": string
 ```
 Mandatory: No (Yes, if in train mode)\
 Exec: parSMURF1 / parSMURFn\
 Output directory for saving the trained models. Must be a valid directory on the filesystem.
+
 
 ##### "simulate"
 ```
@@ -415,12 +441,14 @@ Mandatory: no\
 Exec: parSMURF1 / parSMURFn\
 This field contains all the required information for enabling the internal dataset generator
 
+
 ```
 	"simulation": bool
 ```
 Mandatory: No\
 Exec: parSMURF1 / parSMURFn\
 On true, it enables the internal dataset generator. The fields "dataFile", "foldFile" and "labelFile" are ignored and a random dataset is generated.
+
 
 ```
 	"prob": float
@@ -429,12 +457,14 @@ Mandatory: Yes if simulation mode is enabled\
 Exec: parSMURF1 / parSMURFn\
 This field represent the probability of generating a positive example. Must be a float in the [0,1] range, possibly very small for simulating highly unbalanced datasets
 
+
 ```
 	"n": int
 ```
 Mandatory: Yes if simulation mode is enabled\
 Exec: parSMURF1 / parSMURFn\
 Number of examples to be generated
+
 
 ```
 	"m": int
@@ -443,7 +473,8 @@ Mandatory: Yes if simulation mode is enabled\
 Exec: parSMURF1 / parSMURFn\
 Number of features to be generated
 
-### "folds"
+
+##### "folds"
 ```
 "folds": {
 	"nFolds": int,
@@ -455,12 +486,14 @@ Mandatory: Yes (No, if "foldFile" specified)\
 Exec: parSMURF1 / parSMURFn\
 This section specified the fold subdivision and to which fold execute the run.
 
+
 ```
 	"nFolds": int
 ```
 Mandatory: Yes (No, if "foldFile" specified)\
 Exec: parSMURF1 / parSMURFn\
 This field specifies in how many folds the dataset should be subdivided into. Ignored if "foldFile" has been declared.
+
 
 ```
 	"startingFold": int,
@@ -489,6 +522,7 @@ When "optimizer" is set to "no", only one combination is used for the run.\
 When "optimizer" is set to "grid", parSMURF generates all the possible hyper-parameter combinations and evaluate them in the internla CV loop.\
 For a deeper explanation of each parameter, please refer to the article
 
+
 ```
 	"nParts": array of int
 ```
@@ -496,6 +530,7 @@ Mandatory: Yes\
 Exec: parSMURF1 / parSMURFn\
 Number of partitions (ensembles)\
 Default: 10
+
 
 ```
 	"fp": array of int
@@ -505,6 +540,7 @@ Exec: parSMURF1 / parSMURFn\
 Over-sampling factor (0 disables over-sampling)\
 Default: 1
 
+
 ```
 	"ratio": array of int
 ```
@@ -512,6 +548,7 @@ Mandatory: Yes\
 Exec: parSMURF1 / parSMURFn\
 Under-sampling factor (0 disables under-sampling)\
 Defaul: 1
+
 
 ```
 	"k": array of int
@@ -521,6 +558,7 @@ Exec: parSMURF1 / parSMURFn\
 Number of the nearest neighbors for SMOTE oversampling of the minority class\
 Default: 5
 
+
 ```
 	"nTrees": array of int
 ```
@@ -529,6 +567,7 @@ Exec: parSMURF1 / parSMURFn\
 Number of trees in each ensemble\
 Default: 10
 
+
 ```
 	"mtry": array of int
 ```
@@ -536,6 +575,7 @@ Mandatory: Yes\
 Exec: parSMURF1 / parSMURFn\
 mtry random forest parameter\
 Default: sqrt(m)
+
 
 ##### "autogp_params"
 ```
@@ -594,7 +634,7 @@ Every sub-field is mandatory. If the user needs to perform a partial search (i.e
 
 As previously stated, data is provided to the application in two or three files.
 
-Data file:\
+##### Data file
 this file should contain the main data needed for computing the predictions. It consists in an n x m matrix of double, where n is the number of examples and m the features. The matrix is read column-wise, i.e. :
 ```
    | m1   m2   m3   m4 ...
@@ -621,11 +661,11 @@ for (i in 1:ncol( data )) {
 	writeBin( dataColumn, outfile )
 }
 ```
-Label file:\
+##### Label file
 this file should contain the labelling of the examples. It consists in n space or tab separated values, where n is the number of examples.\
 It is a plain text file where each positive example is marked with "1" and negative examples with "0".
 
-Fold file:\
+##### Fold file
 this optional file should contain the fold sub division. If specified, examples will be divided in folds as specified in this file. If not, a random stratified division will be performed. This file consists in n space or tab separated integer values, where n is the number of examples.\
 It is a plain text file where each number represents the fold to which each example is assigned. Fold numbering starts from "0" (zero).
 Note that specifying the fold file name overrides the "nFolds" option in the ocnfiguration file.
@@ -635,8 +675,7 @@ The following code snippet converts two R vectors in the corresponding labelling
 write(vectorOfLabels, file = "labels.txt", sep = "\n")
 write(vectorOfFolds, file = "folds.txt", sep = "\n")
 ```
-
-Output file:\
+##### Output file
 Predictions will be saved as plain text file.\
 The output file consists of two lines of n space separated double values, where n is the number of examples.\
 Each value in the first line represents the probability of the associated example to be in the minority class, while each value in the second line, the probability to be in the majority class.
@@ -669,7 +708,7 @@ Folder cfgEx of the repository contains several example of configuration files t
 
 ### License
 
-This package is distributed under the GNU GPLv3 license. Please see the http://github.com/anacletolab/parSMURF/COPYING file for the complete version of the license.
+This package is distributed under the GNU GPLv3 license. Please see the http://github.com/anacletolab/parSMURF/LICENSE file for the complete version of the license.
 
 parSMURF includes several third-party libraries which are distributed with their own license. In particular, source code of the following libraries is included in this package:
 
