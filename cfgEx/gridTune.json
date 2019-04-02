@@ -1,0 +1,32 @@
+{
+	"name": "cfgEx_gridTune",
+	"exec": {
+		"name": "parSMURF",
+		"nProcs": 1,
+		"ensThrd": 6,
+		"rfThrd": 4,
+		"seed": 18,
+		"verboseLevel": 1,
+		"saveTime": true,
+		"timeFile": "timeout.txt",
+		"printCfg": true,
+		"mode": "cv",
+		"optimizer": "grid"
+	},
+	"data": {
+		"dataFile": "/home/user01/data/data.txt",
+		"labelFile": "/home/user01/data/labels.txt",
+		"outFile": "predictions.txt",
+	},
+	"folds": {
+		"nFolds": 5
+	},
+	"params": {
+		"nParts": [10, 20, 30],
+		"fp": [1, 2],
+		"ratio": [1],
+		"k": [5],
+		"nTrees": [10],
+		"mtry": [5, 7, 10]
+	}
+}

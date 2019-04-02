@@ -1,0 +1,35 @@
+{
+	"name": "cfgEx_simulCV",
+	"exec": {
+		"name": "parSMURF1",
+		"ensThrd": 4,
+		"rfThrd": 1,
+		"seed": 1,
+		"verboseLevel": 1,
+		"saveTime": true,
+		"timeFile": "timeout.txt",
+		"printCfg": true,
+		"mode": "cv",
+		"optimizer": "no"
+	},
+	"data": {
+		"outFile": "predictions.txt",
+	},
+	"simulate": {
+		"simulation": false,
+		"prob": 0.02,
+		"n": 1200,
+		"m": 25
+	},
+	"folds": {
+		"nFolds": 10,
+	},
+	"params": {
+		"nParts": [10],
+		"fp": [1],
+		"ratio": [1],
+		"k": [5],
+		"nTrees": [10],
+		"mtry": [5]
+	}
+}

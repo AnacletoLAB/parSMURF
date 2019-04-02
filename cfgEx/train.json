@@ -1,0 +1,33 @@
+{
+	"name": "test_train",
+	"exec": {
+		"name": "parSMURFn",
+		"nProcs": 2,
+		"ensThrd": 3,
+		"rfThrd": 4,
+		"noMtSender": true,
+		"verboseLevel": 2,
+		"verboseMPI": false,
+		"saveTime": true,
+		"timeFile": "timeout.txt",
+		"printCfg": true,
+		"mode": "train",
+		"optimizer": "no"
+	},
+	"data": {
+		"dataFile": "/home/user01/data/data2.txt",
+		"labelFile": "/home/user01/data/labels2.txt",
+		"forestDir": "/home/user01/models/trainedModel/"
+	},
+	"folds": {
+		"nFolds": 5
+	},
+	"params": {
+		"nParts": [25],
+		"fp": [2],
+		"ratio": [3],
+		"k": [4],
+		"nTrees": [75],
+		"mtry": [15]
+	}
+}
