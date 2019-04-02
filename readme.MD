@@ -70,14 +70,14 @@ Bayesian Optimization is done by the Spearmint package. This package require pyt
 ```
 sudo apt-get install virtualenv
 <move to an appropriate folder>
-virtualenv parSMURFvenv -p /usr/bin/python2		#This command should create a parSMURFvenv directory
-source parSMURFvenv/bin/activate				#This command activates the virtual environment
-pip install numpy==1.13.0						#The following commands install the required packages in the virtual environment
+virtualenv parSMURFvenv -p /usr/bin/python2	#This command creates a parSMURFvenv directory
+source parSMURFvenv/bin/activate		#This command activates the virtual environment
+pip install numpy==1.13.0			#The following commands install the required packages in the virtual environment
 pip install scipy==1.2.1
 pip install weave==0.17.0
 pip install six==1.12.0
 pip install protobuf==3.7.1
-deactivate										#Deactivate the virtual environment
+deactivate					#Deactivate the virtual environment
 ```
 
 parSMURF uses several external libraries that are included ad source code in this repository or are automatically downloaded and compiled. In particular, the following libraries are included:
@@ -230,7 +230,7 @@ Depending on the configuration itself, some dictionaries are not mandatory and c
 ```
 	"name": string
 ```
-Mandatory: no
+Mandatory: no/
 Exec: parSMURF1 / parSMURFn
 A string for labeling the name of the experiment
 
