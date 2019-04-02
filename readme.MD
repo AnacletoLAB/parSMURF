@@ -230,8 +230,8 @@ Depending on the configuration itself, some dictionaries are not mandatory and c
 ```
 	"name": string
 ```
-Mandatory: no/
-Exec: parSMURF1 / parSMURFn
+Mandatory: no\
+Exec: parSMURF1 / parSMURFn\
 A string for labeling the name of the experiment
 
 ##### "exec"
@@ -251,8 +251,8 @@ A string for labeling the name of the experiment
 		"mode": string
 },
 ```
-Mandatory: yes
-Exec: parSMURF1 / parSMURFn
+Mandatory: yes\
+Exec: parSMURF1 / parSMURFn\
 General configuration of the run.
 
 ```
