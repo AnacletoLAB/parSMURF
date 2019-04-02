@@ -258,99 +258,99 @@ General configuration of the run.
 ```
 	"name": string
 ```
-Mandatory: No
-Exec: parSMURF1 / parSMURFn
+Mandatory: No\
+Exec: parSMURF1 / parSMURFn\
 Label used for marking the name of the executable (parSMURF1 or parSMURFn). It does not affect the computation itself, since this field is ignored by the json parser
 
 ```
 	"nProcs": int
 ```
-Mandatory: No
-Exec: parSMURFn
+Mandatory: No\
+Exec: parSMURFn\
 Label used for marking the number of processes for a run of parSMURFn. It does not affect the computation itself, since the total number of processes is detected at runtime by the MPI APIs.
 
 ```
 	"ensThrd": int
 ```
-Mandatory: Yes
-Exec: parSMURF1 / parSMURFn
+Mandatory: Yes\
+Exec: parSMURF1 / parSMURFn\
 Number of threads assigned to perform the partition processing.
 
 ```
 	"rfThrd": int
 ```
-Mandatory: Yes
-Exec: parSMURF1 / parSMURFn
+Mandatory: Yes\
+Exec: parSMURF1 / parSMURFn\
 Number of threads assigned to perform the random forest train and test.
 
 ```
 	"noMtSender": bool
 ```
-Mandatory: No
-Exec: parSMURFn
+Mandatory: No\
+Exec: parSMURFn\
 This option disables multithreading in the master process. It may affect performances, but it may be necessary when processing particularly large datasets.
 
 ```
 	"seed": int
 ```
-Mandatory: No
-Exec: parSMURF1 / parSMURFn
+Mandatory: No\
+Exec: parSMURF1 / parSMURFn\
 Optional seed for the random number generators. If unspecified, a random seed is generated.
 
 ```
 	"verboseLevel": int
 ```
-Mandatory: No
-Exec: parSMURF1 / parSMURFn
+Mandatory: No\
+Exec: parSMURF1 / parSMURFn\
 Level of verbosity on stdout and on the logfile of the computational task. Range is 0-3 (default: 0).
 
 ```
 	"verboseMPI": bool
 ```
-Mandatory: No
-Exec: parSMURFn
+Mandatory: No\
+Exec: parSMURFn\
 Verbose on stdout and logfile the calls to MPI APIs. (Default: false)
 
 ```
 	"saveTime": bool
 ```
-Mandatory: No
-Exec: parSMURF1 / parSMURFn
+Mandatory: No\
+Exec: parSMURF1 / parSMURFn\
 Option for saving a report of the computation time of the run (Default: false)
 
 ```
 	"timeFile": string
 ```
-Mandatory: Yes, if "saveTime" is set to true
-Exec: parSMURF1 / parSMURFn
+Mandatory: Yes, if "saveTime" is set to true\
+Exec: parSMURF1 / parSMURFn\
 File name for saving the execution time report
 
 ```
 	"printCfg": bool
 ```
-Mandatory: No
-Exec: parSMURF1 / parSMURFn
+Mandatory: No\
+Exec: parSMURF1 / parSMURFn\
 Option for printing a detailed description of the run before it starts (Default: false)
 
 ```
 	"mode": string
 ```
-Mandatory: Yes
-Exec: parSMURF1 / parSMURFn
-Execution mode. Allowed strings are:
-"cv": Dataset is splitted in folds, and evaluated in a process of k-fold cross validation. The run returns a set of predictions (default).
-"train": The whole dataset is treated as training set. The run returns a folder of trained models for later usage.
-"test": The whole dataset is treated as test set. It is mandatory to submit a directory of trained models to perform the evaluation. The run returns a set of predictions.
+Mandatory: Yes\
+Exec: parSMURF1 / parSMURFn\
+Execution mode. Allowed strings are:\
+"cv": Dataset is splitted in folds, and evaluated in a process of k-fold cross validation. The run returns a set of predictions (default).\
+"train": The whole dataset is treated as training set. The run returns a folder of trained models for later usage.\
+"test": The whole dataset is treated as test set. It is mandatory to submit a directory of trained models to perform the evaluation. The run returns a set of predictions.\
 Note that the autotuning of the learning parameters is available only for "cv" mode
 
 ```
 	"optimizer": string
 ```
-Mandatory: Yes
-Exec: parSMURF1 / parSMURFn
-Execution mode. Allowed strings are:
-"no": external cross-validation only (default)
-"grid": automatic tuning of the learning parameters by grid search in the internal cross validation loop
+Mandatory: Yes\
+Exec: parSMURF1 / parSMURFn\
+Execution mode. Allowed strings are:\
+"no": external cross-validation only (default)\
+"grid": automatic tuning of the learning parameters by grid search in the internal cross validation loop\
 "autogp": automatic tuning of the learning parameters by Bayesian optimization (Gaussian process) in the internal cross validation loop
 
 ##### "data"
@@ -363,43 +363,43 @@ Execution mode. Allowed strings are:
 	"forestDir": string
 }
 ```
-Mandatory: yes
-Exec: parSMURF1 / parSMURFn
+Mandatory: yes\
+Exec: parSMURF1 / parSMURFn\
 This field contains all the required information for accessing data from and to the system.
 
 ```
 	"dataFile": string
 ```
-Mandatory: Yes (No if simulation mode is enabled)
-Exec: parSMURF1 / parSMURFn
+Mandatory: Yes (No if simulation mode is enabled)\
+Exec: parSMURF1 / parSMURFn\
 Input data file
 
 ```
 	"foldFile": string
 ```
-Mandatory: No
-Exec: parSMURF1 / parSMURFn
+Mandatory: No\
+Exec: parSMURF1 / parSMURFn\
 Optional input file containing the fold division of the dataset
 
 ```
 	"labelFile": string
 ```
-Mandatory: Yes (No, if simulation mode is enabled)
-Exec: parSMURF1 / parSMURFn
+Mandatory: Yes (No, if simulation mode is enabled)\
+Exec: parSMURF1 / parSMURFn\
 Input file containing the labels of the examples of the dataset
 
 ```
 	"outFile": string
 ```
-Mandatory: Yes (No, if in train mode)
-Exec: parSMURF1 / parSMURFn
+Mandatory: Yes (No, if in train mode)\
+Exec: parSMURF1 / parSMURFn\
 Output file containing the output predictions
 
 ```
 	"forestDir": string
 ```
-Mandatory: No (Yes, if in train mode)
-Exec: parSMURF1 / parSMURFn
+Mandatory: No (Yes, if in train mode)\
+Exec: parSMURF1 / parSMURFn\
 Output directory for saving the trained models. Must be a valid directory on the filesystem.
 
 ##### "simulate"
@@ -411,36 +411,36 @@ Output directory for saving the trained models. Must be a valid directory on the
 	"m": int
 },
 ```
-Mandatory: no
-Exec: parSMURF1 / parSMURFn
+Mandatory: no\
+Exec: parSMURF1 / parSMURFn\
 This field contains all the required information for enabling the internal dataset generator
 
 ```
 	"simulation": bool
 ```
-Mandatory: No
-Exec: parSMURF1 / parSMURFn
+Mandatory: No\
+Exec: parSMURF1 / parSMURFn\
 On true, it enables the internal dataset generator. The fields "dataFile", "foldFile" and "labelFile" are ignored and a random dataset is generated.
 
 ```
 	"prob": float
 ```
-Mandatory: Yes if simulation mode is enabled
-Exec: parSMURF1 / parSMURFn
+Mandatory: Yes if simulation mode is enabled\
+Exec: parSMURF1 / parSMURFn\
 This field represent the probability of generating a positive example. Must be a float in the [0,1] range, possibly very small for simulating highly unbalanced datasets
 
 ```
 	"n": int
 ```
-Mandatory: Yes if simulation mode is enabled
-Exec: parSMURF1 / parSMURFn
+Mandatory: Yes if simulation mode is enabled\
+Exec: parSMURF1 / parSMURFn\
 Number of examples to be generated
 
 ```
 	"m": int
 ```
-Mandatory: Yes if simulation mode is enabled
-Exec: parSMURF1 / parSMURFn
+Mandatory: Yes if simulation mode is enabled\
+Exec: parSMURF1 / parSMURFn\
 Number of features to be generated
 
 ### "folds"
@@ -451,23 +451,23 @@ Number of features to be generated
 	"endingFold": int
 }
 ```
-Mandatory: Yes (No, if "foldFile" specified)
-Exec: parSMURF1 / parSMURFn
+Mandatory: Yes (No, if "foldFile" specified)\
+Exec: parSMURF1 / parSMURFn\
 This section specified the fold subdivision and to which fold execute the run.
 
 ```
 	"nFolds": int
 ```
-Mandatory: Yes (No, if "foldFile" specified)
-Exec: parSMURF1 / parSMURFn
+Mandatory: Yes (No, if "foldFile" specified)\
+Exec: parSMURF1 / parSMURFn\
 This field specifies in how many folds the dataset should be subdivided into. Ignored if "foldFile" has been declared.
 
 ```
 	"startingFold": int,
 	"endingFold": int
 ```
-Mandatory: No
-Exec: parSMURF1 / parSMURFn
+Mandatory: No\
+Exec: parSMURF1 / parSMURFn\
 These fields specify the starting and ending fold that parSMURF have to evaluate. This is useful for parallelizing runs across different folds. If unspecified, parSMURF performs the evaluation of the predictions on all folds.
 
 
@@ -482,59 +482,59 @@ These fields specify the starting and ending fold that parSMURF have to evaluate
 	"mtry": array of int
 },
 ```
-Mandatory: Yes
-Exec: parSMURF1 / parSMURFn
-This field contains the learning parameters for the run. All values must be passed as arrays.
-When "optimizer" is set to "no", only one combination is used for the run.
-When "optimizer" is set to "grid", parSMURF generates all the possible hyper-parameter combinations and evaluate them in the internla CV loop.
+Mandatory: Yes\
+Exec: parSMURF1 / parSMURFn\
+This field contains the learning parameters for the run. All values must be passed as arrays.\
+When "optimizer" is set to "no", only one combination is used for the run.\
+When "optimizer" is set to "grid", parSMURF generates all the possible hyper-parameter combinations and evaluate them in the internla CV loop.\
 For a deeper explanation of each parameter, please refer to the article
 
 ```
 	"nParts": array of int
 ```
-Mandatory: Yes
-Exec: parSMURF1 / parSMURFn
-Number of partitions (ensembles)
+Mandatory: Yes\
+Exec: parSMURF1 / parSMURFn\
+Number of partitions (ensembles)\
 Default: 10
 
 ```
 	"fp": array of int
 ```
-Mandatory: Yes
-Exec: parSMURF1 / parSMURFn
-Over-sampling factor (0 disables over-sampling)
+Mandatory: Yes\
+Exec: parSMURF1 / parSMURFn\
+Over-sampling factor (0 disables over-sampling)\
 Default: 1
 
 ```
 	"ratio": array of int
 ```
-Mandatory: Yes
-Exec: parSMURF1 / parSMURFn
-Under-sampling factor (0 disables under-sampling)
+Mandatory: Yes\
+Exec: parSMURF1 / parSMURFn\
+Under-sampling factor (0 disables under-sampling)\
 Defaul: 1
 
 ```
 	"k": array of int
 ```
-Mandatory: Yes
-Exec: parSMURF1 / parSMURFn
-Number of the nearest neighbors for SMOTE oversampling of the minority class
+Mandatory: Yes\
+Exec: parSMURF1 / parSMURFn\
+Number of the nearest neighbors for SMOTE oversampling of the minority class\
 Default: 5
 
 ```
 	"nTrees": array of int
 ```
-Mandatory: Yes
-Exec: parSMURF1 / parSMURFn
-Number of trees in each ensemble
+Mandatory: Yes\
+Exec: parSMURF1 / parSMURFn\
+Number of trees in each ensemble\
 Default: 10
 
 ```
 	"mtry": array of int
 ```
-Mandatory: Yes
-Exec: parSMURF1 / parSMURFn
-mtry random forest parameter
+Mandatory: Yes\
+Exec: parSMURF1 / parSMURFn\
+mtry random forest parameter\
 Default: sqrt(m)
 
 ##### "autogp_params"
@@ -583,9 +583,9 @@ Default: sqrt(m)
 			"size": 1
 		}
 ```
-Mandatory: No (Yes, if "optimizer" is set to "autogp")
-Exec: parSMURF1 / parSMURFn
-This section is used for defining the search space of the Bayesing optimizer. It is composed by six sub-fields, each one defining the search space of one learning parameter. The only parts that can be modified are the "min" and "max" fields of each parameters.
+Mandatory: No (Yes, if "optimizer" is set to "autogp")\
+Exec: parSMURF1 / parSMURFn\
+This section is used for defining the search space of the Bayesing optimizer. It is composed by six sub-fields, each one defining the search space of one learning parameter. The only parts that can be modified are the "min" and "max" fields of each parameters.\
 Every sub-field is mandatory. If the user needs to perform a partial search (i.e. tuning only some of the six parameters), please set the "min" and "max" values of the fixed parameters to the same value.
 
 
@@ -594,7 +594,7 @@ Every sub-field is mandatory. If the user needs to perform a partial search (i.e
 
 As previously stated, data is provided to the application in two or three files.
 
-Data file:
+Data file:\
 this file should contain the main data needed for computing the predictions. It consists in an n x m matrix of double, where n is the number of examples and m the features. The matrix is read column-wise, i.e. :
 ```
    | m1   m2   m3   m4 ...
@@ -607,7 +607,7 @@ n4 | \ /                        ( 1 )
 .  |
 .  |
 ```
-Hence, the data file should be ordered so that the first line contains all the examples for the first feature, the second line the examples for the second feature, and so on.
+Hence, the data file should be ordered so that the first line contains all the examples for the first feature, the second line the examples for the second feature, and so on.\
 parSMURF1 and parSMURFn accepts data files in two different formats:
 - plain text file: n x m space (or tab, comma, etc...) separated values
 - binary file: binary encoded n x m values
@@ -621,12 +621,12 @@ for (i in 1:ncol( data )) {
 	writeBin( dataColumn, outfile )
 }
 ```
-Label file:
-this file should contain the labelling of the examples. It consists in n space or tab separated values, where n is the number of examples.
+Label file:\
+this file should contain the labelling of the examples. It consists in n space or tab separated values, where n is the number of examples.\
 It is a plain text file where each positive example is marked with "1" and negative examples with "0".
 
-Fold file:
-this optional file should contain the fold sub division. If specified, examples will be divided in folds as specified in this file. If not, a random stratified division will be performed. This file consists in n space or tab separated integer values, where n is the number of examples.
+Fold file:\
+this optional file should contain the fold sub division. If specified, examples will be divided in folds as specified in this file. If not, a random stratified division will be performed. This file consists in n space or tab separated integer values, where n is the number of examples.\
 It is a plain text file where each number represents the fold to which each example is assigned. Fold numbering starts from "0" (zero).
 Note that specifying the fold file name overrides the "nFolds" option in the ocnfiguration file.
 
@@ -636,30 +636,30 @@ write(vectorOfLabels, file = "labels.txt", sep = "\n")
 write(vectorOfFolds, file = "folds.txt", sep = "\n")
 ```
 
-Output file:
-Predictions will be saved as plain text file.
-The output file consists of two lines of n space separated double values, where n is the number of examples.
+Output file:\
+Predictions will be saved as plain text file.\
+The output file consists of two lines of n space separated double values, where n is the number of examples.\
 Each value in the first line represents the probability of the associated example to be in the minority class, while each value in the second line, the probability to be in the majority class.
 
-Note about dimensionality:
+Note about dimensionality:\
 When reading data from file, parSMURF1 and parSMURFn automatically detect the number of examples and features, following these rules:
 - at first, the number of examples is detected from the label file.
 - then, the number of features is detected from the data file and calculated as number of (elements read in the data file) / (number of labels).
-Hence, the sizes of these files should be consistent, otherwise a warning message is printed to the console.
+Hence, the sizes of these files should be consistent, otherwise a warning message is printed to the console.\
 Also, the number of folds is detected from the fold file if specified. In this case, the option "nFolds" in the configuration file is ignored, and the total number of folds will be equal to the number of the total unique elements of the fold file.
 
 
 ### Random dataset generation
 
-parSMURF1 and parSMURFn are provided with a random dataset generator for testing purposes.
-When enabled, a random dataset will be created according to two normal distribution having the same variance but different average value, depending if an example falls in the positive or negative class.
-The user enables this mode by using the `"simulate: true"` option in the configuration file.
-The user is also forced to specify the the probability that an example belongs to the minority class (`"prob": float`) and dimensionality of the dataset with the `"n": float` and `"m": int` options.
+parSMURF1 and parSMURFn are provided with a random dataset generator for testing purposes.\
+When enabled, a random dataset will be created according to two normal distribution having the same variance but different average value, depending if an example falls in the positive or negative class.\
+The user enables this mode by using the `"simulate: true"` option in the configuration file.\
+The user is also forced to specify the the probability that an example belongs to the minority class (`"prob": float`) and dimensionality of the dataset with the `"n": float` and `"m": int` options.\
 An additional line will be added to the output file, containing the labelling that has been randomly generated according to the `"prob"` value.
 
 
 ### Examples
-Folder cfgEx of the repository contains several example of configuration files to be used either with parSMURF1 or parSMURFn.
+Folder cfgEx of the repository contains several example of configuration files to be used either with parSMURF1 or parSMURFn.\
 - `simulCV.json` (for parSMURF1): it generates a random dataset of 1200 examples and 25 features; probability of a positive example is very low (0.02). Execute a 10-fold cross validation with random stratified fold sub-division. Learning parameters are fixed to: nParts = 10, fp = ratio = 1, k = 5, nTrees = 10, mtry = 5. Results are saved into the "predicitons.txt" file. Also a report of the execution time is generated in the timeout.txt. Seed fixed at 1. parSMURF spawns 4 threads for partition processing, and for each one of them it spawns another thread for random forest train and test.
 - `simulCVn.json` (for parSMURFn): it generates a random dataset of 12000 examples and 75 features; probability of a positive example is very low (0.025). Execute a 10-fold cross validation with random stratified fold sub-division. Learning parameters are fixed to: nParts = 100, fp = 1, ratio = 2, k = 3, nTrees = 100, mtry = 9. Results are saved into the "predicitons.txt" file. Also a report of the execution time is generated in the timeout.txt. Seed fixed at 1. It must be launched as `mpirun -n 5 ./parSMURFn --cfg simulCVn.json`, so that 4 worker processes are spawned, each one with 6 threads for partition processing, and for each of them 2 threads for random forest train and test are spawned. This execution also verbose to stdout all the MPI API calls.
 - `gridTune.json` (for parSMURF1): data is read from file, as well for the labelling. Folds are randomly generated. Execute an partial automatic tuning of the learning parameters over a 5-fold cross validation. Parameters to be tuned are: nParts, fp and mtry. This configuration generates 18 possible hyper-parameter combinations that are tested in the internal cross validation. AUPRC results for each combination are saved in the files "fold0.dat" to "fold4.dat". It also generates a prediction file contianing the predictions for each fold obtained by the best hyper-parameter combiantion for the relative fold.
@@ -673,42 +673,42 @@ This package is distributed under the GNU GPLv3 license. Please see the http://g
 
 parSMURF includes several third-party libraries which are distributed with their own license. In particular, source code of the following libraries is included in this package:
 
-ANN: Approximate Nearest Neighbor Searching
-David M. Mount and Sunil Arya
-Version 1.1.2
-(https://www.cs.umd.edu/~mount/ANN/)
-Modified and redistributed under the GNU Lesser Public License v2.1
+ANN: Approximate Nearest Neighbor Searching\
+David M. Mount and Sunil Arya\
+Version 1.1.2\
+(https://www.cs.umd.edu/~mount/ANN/)\
+Modified and redistributed under the GNU Lesser Public License v2.1\
 Copy of the license is available in the src/ann_1.1.2 directory
 
-Ranger: A Fast Implementation of Random Forests
-Marvin N. Wright
-Version 0.11.1
-(https://github.com/imbs-hl/ranger)
-Modified and redistributed under the MIT license
+Ranger: A Fast Implementation of Random Forests\
+Marvin N. Wright\
+Version 0.11.1\
+(https://github.com/imbs-hl/ranger)\
+Modified and redistributed under the MIT license\
 Copy of the license is available in the src/ranger folder
 
-Spearmint
-Jasper Snoek, Hugo Larochelle and Ryan P. Adams
-(https://github.com/JasperSnoek/spearmint/)
-Modified and redistributed under the NU General Public License v3
+Spearmint\
+Jasper Snoek, Hugo Larochelle and Ryan P. Adams\
+(https://github.com/JasperSnoek/spearmint/)\
+Modified and redistributed under the NU General Public License v3\
 Copy of the license is available in the src/spearmint/spearmint folder
 
 Also, parSMURF uses several libraries whose source code is not included in the package, but it is automatically downloaded at compile time. These libraries are:
 
-Easylogging++
-Zuhd Web Services
-(https://github.com/zuhd-org/easyloggingpp)
-Distributed under the MIT license
+Easylogging++\
+Zuhd Web Services\
+(https://github.com/zuhd-org/easyloggingpp)\
+Distributed under the MIT license\
 Copy of the license is available at the project homepage
 
-Jsoncons
-Daniel Parker
-(https://github.com/danielaparker/jsoncons)
-Distributed under the Boost license
+Jsoncons\
+Daniel Parker\
+(https://github.com/danielaparker/jsoncons)\
+Distributed under the Boost license\
 Copy of the license is available at the project homepage
 
-zlib
-Jean-loup Gailly and Mark Adler
-(https://github.com/madler/zlib)
-Distributed under the zlib license
+zlib\
+Jean-loup Gailly and Mark Adler\
+(https://github.com/madler/zlib)\
+Distributed under the zlib license\
 Copy of the license is available at the project homepage
