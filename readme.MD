@@ -2,6 +2,8 @@
 
 This package contains parSMURF, a High Performance Computing imbalance-aware machine learning tool for the genome-wide detection of pathogenic variants.
 
+---
+
 ### Table of Contents
 <pre>
 <a href="#Overview">Overview</a>
@@ -31,6 +33,8 @@ This package contains parSMURF, a High Performance Computing imbalance-aware mac
 <a href="#Licensa">License</a>
 </pre>
 
+---
+
 ### Overview
 parSMURF is a fast and scalable C++ implementation of the HyperSMURF algorithm - hyper-ensemble of SMOTE Undersampled Random Forests - an ensemble approach explicitly designed to deal with the huge imbalance between deleterious and neutral variants.
 
@@ -50,6 +54,7 @@ Both versions share the same design and functionalities outlined in the paper, i
 - auto tuning of the learning parameters by grid search or by means of a Bayesian optimizer
 - ...
 
+---
 
 ### Requirements
 
@@ -97,6 +102,7 @@ The following libraries are not included in this code repository, but are automa
 
 All the libraries have been modified and redistributed according to their own licenses. For each included library, a copy of the associated license is contained in each library folder.
 
+---
 
 ### Downloading and compiling
 
@@ -115,8 +121,7 @@ Once the package has been downloaded, move to the main directory, create a build
 
 This should generate two executables: "parSMURF1" and "parSMURFn".
 
-
-
+---
 
 ### General architecture
 
@@ -165,6 +170,8 @@ iter = 0
 Both strategies are performed in a context of internal cross validation, hence it is performed for each fold of the external CV.
 The output of the procedure is the set of best learning parameter for each fold of the external cross validation.
 
+---
+
 ### Running parSMURF
 parSMURF is a command line executable.\
 All the options are submitted to the main executable through configuration file written in json format.
@@ -212,6 +219,8 @@ source /home/user01/pythonVenvs/parSMURFvenv/bin/activate
 <launch parSMURF1 or parSMURFn as stated earlier>
 deactivate
 ```
+
+---
 
 #### Configuration file
 
@@ -628,7 +637,7 @@ Exec: parSMURF1 / parSMURFn\
 This section is used for defining the search space of the Bayesing optimizer. It is composed by six sub-fields, each one defining the search space of one learning parameter. The only parts that can be modified are the "min" and "max" fields of each parameters.\
 Every sub-field is mandatory. If the user needs to perform a partial search (i.e. tuning only some of the six parameters), please set the "min" and "max" values of the fixed parameters to the same value.
 
-
+---
 
 ### Data format
 
@@ -687,6 +696,7 @@ When reading data from file, parSMURF1 and parSMURFn automatically detect the nu
 Hence, the sizes of these files should be consistent, otherwise a warning message is printed to the console.\
 Also, the number of folds is detected from the fold file if specified. In this case, the option "nFolds" in the configuration file is ignored, and the total number of folds will be equal to the number of the total unique elements of the fold file.
 
+---
 
 ### Random dataset generation
 
@@ -696,6 +706,7 @@ The user enables this mode by using the `"simulate: true"` option in the configu
 The user is also forced to specify the the probability that an example belongs to the minority class (`"prob": float`) and dimensionality of the dataset with the `"n": float` and `"m": int` options.\
 An additional line will be added to the output file, containing the labelling that has been randomly generated according to the `"prob"` value.
 
+---
 
 ### Examples
 Folder cfgEx of the repository contains several example of configuration files to be used either with parSMURF1 or parSMURFn.\
@@ -706,27 +717,29 @@ Folder cfgEx of the repository contains several example of configuration files t
 - `train.json` (for parSMURFn):data is read from file, as well for the labelling. Parameter "nFolds" is ignored. Treats the whole dataset as training set and generates a trained model. The model is saved in the "/home/user01/models/trainedModel/" folder. It must be launched as `mpirun -n 2 ./parSMURFn --cfg train.json`. 1 worker process, with 3 threads for partition processing and 4 for random forest train and test. Logs are more verbose than the previous examples. Multithreading in the master process is disabled.
 - `autoGpTune.json` (for parSMURFn): full auto-tuning of the learning parameters via Bayesian Optimization. Data, labels and fold sub-division are read from file. Parameter "nFolds" is ignored. "params" section of the config file is ignored as well. The parameter search space is defined as follows: nParams in [10, 50], fp in [1, 3], ratio in [1, 3], k in [2, 6], nTrees in [5, 10], mtry in [2, 5].
 
+---
+
 ### License
 
 This package is distributed under the GNU GPLv3 license. Please see the http://github.com/anacletolab/parSMURF/LICENSE file for the complete version of the license.
 
 parSMURF includes several third-party libraries which are distributed with their own license. In particular, source code of the following libraries is included in this package:
 
-ANN: Approximate Nearest Neighbor Searching\
+**ANN: Approximate Nearest Neighbor Searching**\
 David M. Mount and Sunil Arya\
 Version 1.1.2\
 (https://www.cs.umd.edu/~mount/ANN/)\
 Modified and redistributed under the GNU Lesser Public License v2.1\
 Copy of the license is available in the src/ann_1.1.2 directory
 
-Ranger: A Fast Implementation of Random Forests\
+**Ranger: A Fast Implementation of Random Forests**\
 Marvin N. Wright\
 Version 0.11.1\
 (https://github.com/imbs-hl/ranger)\
 Modified and redistributed under the MIT license\
 Copy of the license is available in the src/ranger folder
 
-Spearmint\
+**Spearmint**\
 Jasper Snoek, Hugo Larochelle and Ryan P. Adams\
 (https://github.com/JasperSnoek/spearmint/)\
 Modified and redistributed under the NU General Public License v3\
@@ -734,19 +747,19 @@ Copy of the license is available in the src/spearmint/spearmint folder
 
 Also, parSMURF uses several libraries whose source code is not included in the package, but it is automatically downloaded at compile time. These libraries are:
 
-Easylogging++\
+**Easylogging++**\
 Zuhd Web Services\
 (https://github.com/zuhd-org/easyloggingpp)\
 Distributed under the MIT license\
 Copy of the license is available at the project homepage
 
-Jsoncons\
+**Jsoncons**\
 Daniel Parker\
 (https://github.com/danielaparker/jsoncons)\
 Distributed under the Boost license\
 Copy of the license is available at the project homepage
 
-zlib\
+**zlib**\
 Jean-loup Gailly and Mark Adler\
 (https://github.com/madler/zlib)\
 Distributed under the zlib license\
