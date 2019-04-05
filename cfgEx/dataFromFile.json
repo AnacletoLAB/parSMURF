@@ -1,5 +1,5 @@
 {
-	"name": "cfgEx_simulCV",
+	"name": "cfgEx_dataFromFile",
 	"exec": {
 		"name": "parSMURF1",
 		"ensThrd": 4,
@@ -13,6 +13,9 @@
 		"optimizer": "no"
 	},
 	"data": {
+		"dataFile": "../exampleDataset/data1.txt",
+		"foldFile": "/home/user01/data/folds1.txt",
+		"labelFile": "/home/user01/data/labels1.txt",
 		"outFile": "predictions.txt"
 	},
 	"simulate": {

@@ -2,33 +2,33 @@
 	"name": "cfgEx_simulCVn",
 	"exec": {
 		"name": "parSMURF1",
-		"nProcs": 5,
+		"nProcs": 3,
 		"ensThrd": 6,
 		"rfThrd": 2,
 		"noMtSender": false,
 		"seed": 1,
 		"verboseLevel": 1,
-		"verboseMPI": true,
+		"verboseMPI": false,
 		"saveTime": true,
 		"timeFile": "timeout.txt",
 		"printCfg": true,
 		"mode": "cv",
-		"optimizer": "no"
+		"optimizer": "grid"
 	},
 	"data": {
-		"outFile": "predictions.txt",
+		"outFile": "predictions.txt"
 	},
 	"simulate": {
-		"simulation": false,
-		"prob": 0.025,
+		"simulation": true,
+		"prob": 0.001,
 		"n": 12000,
 		"m": 75
 	},
 	"folds": {
-		"nFolds": 10,
+		"nFolds": 10
 	},
 	"params": {
-		"nParts": [100],
+		"nParts": [70],
 		"fp": [1],
 		"ratio": [2],
 		"k": [3],

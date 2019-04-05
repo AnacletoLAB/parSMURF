@@ -15,8 +15,8 @@
 		"optimizer": "no"
 	},
 	"data": {
-		"dataFile": "/home/user01/data/data2.txt",
-		"labelFile": "/home/user01/data/labels2.txt",
+		"dataFile": "../exampleDataset/data1.txt",
+		"labelFile": "../exampleDataset/labels1.txt",
 		"forestDir": "/home/user01/models/trainedModel/"
 	},
 	"folds": {
