@@ -14,15 +14,9 @@
 	},
 	"data": {
 		"dataFile": "../exampleDataset/data1.txt",
-		"foldFile": "/home/user01/data/folds1.txt",
-		"labelFile": "/home/user01/data/labels1.txt",
+		"foldFile": "../exampleDataset/folds1.txt",
+		"labelFile": "../exampleDataset/labels1.txt",
 		"outFile": "predictions.txt"
-	},
-	"simulate": {
-		"simulation": true,
-		"prob": 0.02,
-		"n": 1200,
-		"m": 25
 	},
 	"folds": {
 		"nFolds": 10
