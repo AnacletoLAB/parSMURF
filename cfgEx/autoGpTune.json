@@ -16,13 +16,13 @@
 		"optimizer": "autogp"
 	},
 	"data": {
-		"dataFile": "/home/user01/data/data2.txt",
-		"foldFile": "/home/user01/data/folds2.txt",
-		"labelFile": "/home/user01/data/labels2.txt",
-		"outFile": "predictions.txt",
+		"dataFile": "../exampleDataset/data1.txt",
+		"foldFile": "../exampleDataset/folds1.txt",
+		"labelFile": "../exampleDataset/labels1.txt",
+		"outFile": "predictions.txt"
 	},
 	"folds": {
-		"nFolds": 10,
+		"nFolds": 10
 	},
 	"params": {
 		"nParts": [10],

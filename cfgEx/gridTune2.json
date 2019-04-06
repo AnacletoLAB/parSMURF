@@ -14,8 +14,8 @@
 		"optimizer": "grid"
 	},
 	"data": {
-		"dataFile": "/home/user01/data/data.txt",
-		"labelFile": "/home/user01/data/labels.txt",
+		"dataFile": "../exampleDataset/data1.txt",
+		"labelFile": "../exampleDataset/labels1.txt",
 		"outFile": "predictions.txt",
 	},
 	"folds": {
