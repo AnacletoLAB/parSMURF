@@ -121,6 +121,11 @@ Once the package has been downloaded, move to the main directory, create a build
 
 This will generate two executables: "parSMURF1" and "parSMURFn".
 
+For a quick test, launch the following command from the build directory:
+```
+./parSMURF1 --cfg ../cfgEx/simulCV.json
+```
+
 ---
 
 ### General architecture
@@ -214,7 +219,7 @@ cp -r /home/user01/git/parSMURF/src/spearmint .
 Now for launching an experiment with the Bayesian optimizer, do the following:
 ```
 cd /home/user01/parSMURFexp
-export PYTHONPATH=$PYTHONPATH:/home/user01/git/parSMURF/src/spearmint/spearmint:/home/user01/git/parSMURF/src/spearmint/spearmint/spearmint
+export PYTHONPATH=$PYTHONPATH:/home/user01/parSMURFexp/spearmint/spearmint:/home/user01/parSMURFexp/spearmint/spearmint/spearmint
 source /home/user01/pythonVenvs/parSMURFvenv/bin/activate
 <launch parSMURF1 or parSMURFn as stated earlier>
 deactivate
