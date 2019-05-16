@@ -17,15 +17,9 @@
 	},
 	"data": {
 		"dataFile": "../exampleDataset/data1.txt",
-<<<<<<< HEAD
-		"foldFile": "/home/user01/data/folds1.txt",
-		"labelFile": "/home/user01/data/labels1.txt",
-		"outFile": "predictions.txt",
-=======
 		"foldFile": "../exampleDataset/folds1.txt",
 		"labelFile": "../exampleDataset/labels1.txt",
 		"outFile": "predictions.txt"
->>>>>>> e896c095e5204b2369d796c74754be6a9baec5a5
 	},
 	"folds": {
 		"nFolds": 10
