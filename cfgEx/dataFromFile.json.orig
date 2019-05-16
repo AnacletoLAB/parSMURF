@@ -18,15 +18,6 @@
 		"labelFile": "../exampleDataset/labels1.txt",
 		"outFile": "predictions.txt"
 	},
-<<<<<<< HEAD
-=======
-	"simulate": {
-		"simulation": true,
-		"prob": 0.02,
-		"n": 1200,
-		"m": 25
-	},
->>>>>>> e896c095e5204b2369d796c74754be6a9baec5a5
 	"folds": {
 		"nFolds": 10
 	},
