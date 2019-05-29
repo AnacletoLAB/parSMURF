@@ -1,5 +1,5 @@
 project(easyloggingpp)
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 2.8)
 find_package(Git)
 
 ## STAMPA TUTTE LE VARIABILI DI AMBIENTE CREATE DA CMAKE

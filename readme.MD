@@ -111,7 +111,7 @@ Download the latest version from this page or clone the git repository altogethe
 	git clone https://github.com/anacletolab/parSMURF
 
 
-Once the package has been downloaded, move to the main directory, create a build dir, invoke cmake and build the software ("-j n" make option enables multithread compilation over n threads):
+Once the package has been downloaded, move to the main directory, create a build dir, invoke cmake and build the software (`-j n` make option enables multithread compilation over n threads):
 
 	cd parSMURF
 	mkdir build
@@ -119,7 +119,7 @@ Once the package has been downloaded, move to the main directory, create a build
 	cmake ../src
 	make -j 4
 
-This should generate two executables: "parSMURF1" and "parSMURFn".
+This will generate two executables: "parSMURF1" and "parSMURFn".
 
 For a quick test, launch the following command from the build directory:
 ```
@@ -717,6 +717,7 @@ An additional line will be added to the output file, containing the labelling th
 Folder cfgEx of the repository contains several example of configuration files to be used either with parSMURF1 or parSMURFn.\
 - `simulCV.json` (for parSMURF1): it generates a random dataset of 1200 examples and 25 features; probability of a positive example is very low (0.02). Execute a 10-fold cross validation with random stratified fold sub-division. Learning parameters are fixed to: nParts = 10, fp = ratio = 1, k = 5, nTrees = 10, mtry = 5. Results are saved into the "predicitons.txt" file. Also a report of the execution time is generated in the timeout.txt. Seed fixed at 1. parSMURF spawns 4 threads for partition processing, and for each one of them it spawns another thread for random forest train and test.
 - `simulCVn.json` (for parSMURFn): it generates a random dataset of 12000 examples and 75 features; probability of a positive example is very low (0.025). Execute a 10-fold cross validation with random stratified fold sub-division. Learning parameters are fixed to: nParts = 100, fp = 1, ratio = 2, k = 3, nTrees = 100, mtry = 9. Results are saved into the "predicitons.txt" file. Also a report of the execution time is generated in the timeout.txt. Seed fixed at 1. It must be launched as `mpirun -n 5 ./parSMURFn --cfg simulCVn.json`, so that 4 worker processes are spawned, each one with 6 threads for partition processing, and for each of them 2 threads for random forest train and test are spawned. This execution also verbose to stdout all the MPI API calls.
+- `dataFromFile.json` (for parSMURF1): execute a 10 fold cross validation over the dataset read from file. Fold subdivision is specified in the "folds.txt" file. No hyper-parameters autotuning.
 - `gridTune.json` (for parSMURF1): data is read from file, as well for the labelling. Folds are randomly generated. Execute an partial automatic tuning of the learning parameters over a 5-fold cross validation. Parameters to be tuned are: nParts, fp and mtry. This configuration generates 18 possible hyper-parameter combinations that are tested in the internal cross validation. AUPRC results for each combination are saved in the files "fold0.dat" to "fold4.dat". It also generates a prediction file contianing the predictions for each fold obtained by the best hyper-parameter combiantion for the relative fold.
 - `gridTune2.json` (for parSMURF1): as in `gridTune.json`, but the whole procedure is executed over folds 3 and 4 only.
 - `train.json` (for parSMURFn):data is read from file, as well for the labelling. Parameter "nFolds" is ignored. Treats the whole dataset as training set and generates a trained model. The model is saved in the "/home/user01/models/trainedModel/" folder. It must be launched as `mpirun -n 2 ./parSMURFn --cfg train.json`. 1 worker process, with 3 threads for partition processing and 4 for random forest train and test. Logs are more verbose than the previous examples. Multithreading in the master process is disabled.
