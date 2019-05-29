@@ -124,7 +124,7 @@ void Folds::verbose() {
 		std::cout << "Fold: " << i << " - Fold size: " << foldsIdx[i + 1] - foldsIdx[i] << std::endl;
 		std::cout << "Fold begins at: " << foldsIdx[i] << " - Fold ends at: " << foldsIdx[i + 1] - 1 << std::endl;
 		std::cout << "nPos: " << nPos[i] << " - nNeg: " << nNeg[i] << std::endl;
-		std::cout << "Positive: ";
+		/*std::cout << "Positive: ";
 		uint32_t foldBegins = foldsIdx[i];
 		uint32_t foldSz = foldsIdx[i + 1] - foldsIdx[i];
 		for (uint32_t k = 0; k < nPos[i]; k++)
@@ -133,7 +133,7 @@ void Folds::verbose() {
 		std::cout << "Negative: ";
 		for (uint32_t k = nPos[i]; k < foldSz; k++)
 			std::cout << folds[foldBegins + k] << " ";
-		std::cout << std::endl;
+		std::cout << std::endl;*/
 		std::cout << std::endl;
 	}
 
