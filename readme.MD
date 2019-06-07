@@ -733,20 +733,20 @@ parSMURF includes several third-party libraries which are distributed with their
 **ANN: Approximate Nearest Neighbor Searching**\
 David M. Mount and Sunil Arya\
 Version 1.1.2\
-(https://www.cs.umd.edu/~mount/ANN/)\
+(https://www.cs.umd.edu/~mount/ANN/) \
 Modified and redistributed under the GNU Lesser Public License v2.1\
 Copy of the license is available in the src/ann_1.1.2 directory
 
 **Ranger: A Fast Implementation of Random Forests**\
 Marvin N. Wright\
 Version 0.11.1\
-(https://github.com/imbs-hl/ranger)\
+(https://github.com/imbs-hl/ranger) \
 Modified and redistributed under the MIT license\
 Copy of the license is available in the src/ranger folder
 
 **Spearmint**\
 Jasper Snoek, Hugo Larochelle and Ryan P. Adams\
-(https://github.com/JasperSnoek/spearmint/)\
+(https://github.com/JasperSnoek/spearmint/) \
 Modified and redistributed under the NU General Public License v3\
 Copy of the license is available in the src/spearmint/spearmint folder
 
@@ -754,18 +754,18 @@ Also, parSMURF uses several libraries whose source code is not included in the p
 
 **Easylogging++**\
 Zuhd Web Services\
-(https://github.com/zuhd-org/easyloggingpp)\
+(https://github.com/zuhd-org/easyloggingpp) \
 Distributed under the MIT license\
 Copy of the license is available at the project homepage
 
 **Jsoncons**\
 Daniel Parker\
-(https://github.com/danielaparker/jsoncons)\
+(https://github.com/danielaparker/jsoncons) \
 Distributed under the Boost license\
 Copy of the license is available at the project homepage
 
 **zlib**\
 Jean-loup Gailly and Mark Adler\
-(https://github.com/madler/zlib)\
+(https://github.com/madler/zlib) \
 Distributed under the zlib license\
 Copy of the license is available at the project homepage
