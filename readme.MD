@@ -52,7 +52,6 @@ Two variants of parSMURF are currently available in this repository:
 Both versions share the same design and functionalities outlined in the paper, in particular:
 - fast, optimized and scalable C++ implementation
 - auto tuning of the learning parameters by grid search or by means of a Bayesian optimizer
-- ...
 
 ---
 
