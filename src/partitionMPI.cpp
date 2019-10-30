@@ -64,7 +64,7 @@ void PartitionMPI::fillTrngData( const double * const x, double * const trngData
 
 	// Copy the negative samples in the trngData matrix
 	for (uint32_t i = 0; i < negToBeGenerated; i++) {
-		copyTrngSample( x, neg[i], i + posToBeGenerated, lineLen,trngData );
+		copyTrngSample( x, neg[i], i + posToBeGenerated, lineLen, trngData );
 	}
 }
 
@@ -84,16 +84,20 @@ void PartitionMPI::verbose() {
 
 
 /////////////////////
-void PartitionMPI::copyTestSample( const double * const x, const uint32_t nSam, const uint32_t nCol, const uint32_t lineLen, double * const testData ) {
+void PartitionMPI::copyTestSample( const double * const x, const uint32_t numSamp, const uint32_t numRow, const uint32_t lineLen, double * const testData ) {
 	double * const dataOut = testData;
-	for (uint32_t i = 0; i < m; i++)
-		dataOut[nCol + lineLen * i] = x[nSam + n * i];
+	// for (uint32_t i = 0; i < m; i++)
+	// 	dataOut[nCol + lineLen * i] = x[nSam + n * i];
+	// NOTE: memcpy should copy m values, not m + 1, since the last one is set to zero after the mem copy
+	std::memcpy(&dataOut[numRow * (m + 1)], &x[numSamp * (m + 1)], (m + 1) * sizeof(double));
 	// Label must be set to 0!
-	dataOut[nCol + lineLen * m] = 0;
+	// dataOut[nCol + lineLen * m] = 0;
+	dataOut[(numRow + 1) * (m + 1) - 1] = 0;
 }
 
-void PartitionMPI::copyTrngSample( const double * const x, const uint32_t nSam, const uint32_t nCol, const uint32_t lineLen, double * const trngData ) {
+void PartitionMPI::copyTrngSample( const double * const x, const uint32_t numSamp, const uint32_t numRow, const uint32_t lineLen, double * const trngData ) {
 	double * dataOut = trngData;
-	for (uint32_t i = 0; i < m + 1; i++)
-		dataOut[nCol + lineLen * i] = x[nSam + n * i];
+	// for (uint32_t i = 0; i < m + 1; i++)
+	// 	dataOut[nCol + lineLen * i] = x[nSam + n * i];
+	std::memcpy(&dataOut[numRow * (m + 1)], &x[numSamp * (m + 1)], (m + 1) * sizeof(double));
 }

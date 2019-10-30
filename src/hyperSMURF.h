@@ -33,6 +33,7 @@ public:
 	void setGridParams( uint32_t idx );
 	void createPart();
 	bool parametersOptimizer( uint32_t foldToJump );
+	void evaluateTrainMetrics();
 
 private:
 	// in

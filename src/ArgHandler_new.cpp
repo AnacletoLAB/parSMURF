@@ -19,7 +19,7 @@ ArgHandle::~ArgHandle() {}
 void ArgHandle::processCommandLine( int rank ) {
 	if (rank == 0)
 		printLogo();
-	
+
 	char const *short_options = "j:u:h";
 	const struct option long_options[] = {
 
@@ -62,11 +62,11 @@ void ArgHandle::processCommandLine( int rank ) {
 	// Instead, configuration is read from a json file
 	if (externalConfig) {
 		if ( rank == 0 )
-			std::cout << "\033[33;1mParsing cfg file...\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "Parsing cfg file..." << TXT_NORML << std::endl;
 		jsonImport( extConfigFilename );
 	} else {
 		if ( rank == 0 )
-			std::cout << "\033[31;1mparSMURF requires a configuration file in json format (--cfg).\033[0m" << std::endl;
+			std::cout << TXT_BIRED << "parSMURF requires a configuration file in json format (--cfg)." << TXT_NORML << std::endl;
 		exit( -1 );
 	}
 
@@ -75,12 +75,16 @@ void ArgHandle::processCommandLine( int rank ) {
 }
 
 void ArgHandle::jsonImport( std::string cfgFilename ) {
-	try {
-        jsoncons::strict_parse_error_handler err_handler;
-		jsCfg = jsoncons::json::parse_file( cfgFilename, err_handler );
-	} catch (const jsoncons::parse_error& e) {
-		std::cout << e.what() << std::endl;
-	}
+	// try {
+    //     jsoncons::strict_parse_error_handler err_handler;
+	// 	jsCfg = jsoncons::json::parse_file( cfgFilename, err_handler );
+	// } catch (const jsoncons::parse_error& e) {
+	// 	std::cout << e.what() << std::endl;
+	// }
+
+	std::ifstream cfgJsonFile(cfgFilename.c_str());
+	jsCfg = jsoncons::json::parse(cfgJsonFile);
+	cfgJsonFile.close();
 
 	jsoncons::json	exec;
 	jsoncons::json	data;
@@ -132,7 +136,7 @@ void ArgHandle::jsonImport( std::string cfgFilename ) {
 void ArgHandle::checkCommonConfig( int rank ) {
 	if (outFilename.empty()) {
 		if (rank == 0)
-			std::cout << "\033[33;1mNo output file name defined. Default used (--out).\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "No output file name defined. Default used ('data':'outFile')." << TXT_NORML << std::endl;
 		outFilename = std::string( "output.txt" );
 	}
 
@@ -148,13 +152,13 @@ void ArgHandle::checkCommonConfig( int rank ) {
 	}
 	else if (mode.length() > 0) {
 		if (rank == 0)
-			std::cout << "\033[31;1mInvalid prediction mode. Please specify either 'cv', 'train' or 'predict' (default is 'cv').\033[0m" << std::endl;
+			std::cout << TXT_BIRED << "Invalid prediction mode. Please specify either 'cv', 'train' or 'predict' (default is 'cv')." << TXT_NORML << std::endl;
 		exit(-1);
 	}
 
 	if (((wmode == MODE_TRAIN) | (wmode == MODE_PREDICT)) & (forestDirname.length() == 0)) {
 		if (rank == 0)
-			std::cout << "\033[31;1mWhen in training or prediction modes, specify the forest base directory (--forestDir).\033[0m" << std::endl;
+			std::cout << TXT_BIRED << "When in training or prediction modes, specify the forest base directory ('data':'forestDir')." << TXT_NORML << std::endl;
 		exit(-1);
 	}
 
@@ -166,7 +170,7 @@ void ArgHandle::checkCommonConfig( int rank ) {
 
 	if ((wmode == MODE_CV) & (foldFilename == "") & (nFolds < 2)) {
 		if (rank == 0)
-			std::cout << "\033[31;1mIn cross-validation mode, specify at least two folds (--nFolds).\033[0m" << std::endl;
+			std::cout << TXT_BIRED << "In cross-validation mode, specify at least two folds ('folds':'nFolds')." << TXT_NORML << std::endl;
 		exit(-1);
 	}
 
@@ -178,42 +182,42 @@ void ArgHandle::checkCommonConfig( int rank ) {
 		woptimiz = OPT_NO;
 	else if (optim.length() > 0) {
 		if (rank == 0)
-			std::cout << "\033[31;1mInvalid optimization mode. Please specify either 'no', 'grid' or 'autogp' (default is 'no').\033[0m" << std::endl;
+			std::cout << TXT_BIRED << "Invalid optimization mode. Please specify either 'no', 'grid' or 'autogp' (default is 'no')." << TXT_NORML << std::endl;
 		exit(-1);
 	}
 
 	if (simulate && ((m == 0) | (n == 0))) {
 		if (rank == 0)
-			std::cout << "\033[31;1mSimualtion enabled: specify m and n (-m and -n).\033[0m" << std::endl;
+			std::cout << TXT_BIRED << "Simualtion enabled: specify m and n ('simulate':'m' and 'simulate':'n')." << TXT_NORML << std::endl;
 		exit(-1);
 	}
 
 	if (simulate && ((prob < 0) | (prob > 1))) {
 		if (rank == 0)
-			std::cout << "\033[31;1mSimulation: probabilty of positive class must be 0 < prob < 1.\033[0m" << std::endl;
+			std::cout << TXT_BIRED << "Simulation: probabilty of positive class must be 0 < prob < 1." << TXT_NORML << std::endl;
 		exit(-1);
 	}
 
 	if (!simulate) {
 		if (dataFilename.empty()) {
 			if (rank == 0)
-				std::cout << "\033[31;1mMatrix file undefined (--data).\033[0m" << std::endl;
+				std::cout << TXT_BIRED << "Matrix file undefined ('data':'dataFile')." << TXT_NORML << std::endl;
 			exit(-1);
 		}
 
 		if (labelFilename.empty()) {
 			if (rank == 0)
-				std::cout << "\033[31;1mLabel file undefined (--label).\033[0m" << std::endl;
+				std::cout << TXT_BIRED << "Label file undefined ('data':'labelFile')." << TXT_NORML << std::endl;
 			exit(-1);
 		}
 
 		if (foldFilename.empty()) {
 			if (rank == 0)
-				std::cout << "\033[33;1mNo fold file name defined. Random generation of folds enabled (--fold).\033[0m";
+				std::cout << TXT_BIYLW << "No fold file name defined. Random generation of folds enabled ('data':'foldFile')." << TXT_NORML;
 			generateRandomFold = true;
 			if (nFolds == 0) {
 				if (rank == 0)
-					std::cout << "\033[33;1m [nFold = 3 as default (--nFolds)]\033[0m";
+					std::cout << TXT_BIYLW << " [nFold = 3 as default ('folds':'nFolds')]" << TXT_NORML;
 				nFolds = 3;
 			}
 			std::cout << std::endl;
@@ -221,99 +225,99 @@ void ArgHandle::checkCommonConfig( int rank ) {
 
 		if (!foldFilename.empty() && (nFolds != 0)) {
 			if (rank == 0)
-				std::cout << "\033[33;1mnFolds option ignored (mumble, mumble...).\033[0m" << std::endl;
+				std::cout << TXT_BIYLW << "nFolds option ignored (mumble, mumble...)." << TXT_NORML << std::endl;
 		}
 	}
 
 	if (simulate & (nFolds == 0)) {
 		if (rank == 0)
-			std::cout << "\033[33;1mNo number of folds specified. Using default setting: 3 (--nFolds).\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "No number of folds specified. Using default setting: 3 ('folds':'nFolds')." << TXT_NORML << std::endl;
 		nFolds = 3;
 	}
 
 	if (((wmode == MODE_TRAIN) | (wmode == MODE_PREDICT)) & (forestDirname.length() == 0)) {
 		if (rank == 0)
-			std::cout << "\033[31;1mWhen in training or prediction modes, specify the forest base directory (--forestDir).\033[0m" << std::endl;
+			std::cout << TXT_BIRED << "When in training or prediction modes, specify the forest base directory ('data':'forestDir')." << TXT_NORML << std::endl;
 		exit(-1);
 	}
 
 	if ((wmode == MODE_CV) & (foldFilename == "") & (nFolds < 2)) {
 		if (rank == 0)
-			std::cout << "\033[31;1mIn cross-validation mode, specify at least two folds (--nFolds).\033[0m" << std::endl;
+			std::cout << TXT_BIRED << "In cross-validation mode, specify at least two folds ('folds':'nFolds')." << TXT_NORML << std::endl;
 		exit(-1);
 	}
 
 	if (seed == 0) {
 		seed = (uint32_t) time( NULL );
 		if (rank == 0)
-			std::cout << "\033[33;1mNo seed specified. Generating a random seed: " << seed << " (--seed).\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "No seed specified. Generating a random seed: " << seed << " ('exec':'seed')." << TXT_NORML << std::endl;
 		srand( seed );
 	}
 
 	if (ensThreads <= 0) {
 		if (rank == 0)
-			std::cout << "\033[33;1mNo ensemble threads specified. Executing in single thread mode (--ensThrd).\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "No ensemble threads specified. Executing in single thread mode ('exec':'ensThrd')." << TXT_NORML << std::endl;
 		ensThreads = 1;
 	}
 
 	if (rfThreads <= 0) {
 		if (rank == 0)
-			std::cout << "\033[33;1mNo rf threads specified. Leaving choice to Ranger (--rfThrd).\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "No rf threads specified. Leaving choice to Ranger ('exec':'rfThrd')." << TXT_NORML << std::endl;
 		rfThreads = 0;
 	}
 
 	if (verboseLevel > 3) {
 		if (rank == 0)
-			std::cout << "\033[33;1mNverbose-level higher than 3.\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "verbose-level higher than 3." << TXT_NORML << std::endl;
 		verboseLevel = 3;
 	}
 
 	if (verboseLevel < 0) {
 		if (rank == 0)
-			std::cout << "\033[33;1mverbose-level lower than 0.\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "verbose-level lower than 0." << TXT_NORML << std::endl;
 		verboseLevel = 0;
 	}
 
 	if (verboseMPI == true) {
 		if (rank == 0)
-			std::cout << "\033[33;1mMPI verbose enabled.\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "MPI verbose enabled." << TXT_NORML << std::endl;
 	}
 }
 
 void ArgHandle::checkConfig( int rank ) {
 	if (gridParams[0].nParts == -1) {
 		if (rank == 0)
-			std::cout << "\033[33;1mNo number of partitions specified. Using default setting: 3 (--nParts).\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "No number of partitions specified. Using default setting: 3 ('params':'nParts')." << TXT_NORML << std::endl;
 		std::for_each( gridParams.begin(), gridParams.end(), [&](GridParams &val) {val.nParts = 3;} );
 	}
 
 	if (gridParams[0].nTrees == -1) {
 		if (rank == 0)
-			std::cout << "\033[33;1mNo number of trees for ensemble specified. Using default setting: 50 (--nTrees).\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "No number of trees for ensemble specified. Using default setting: 50 ('params':'nTrees')." << TXT_NORML << std::endl;
 		std::for_each( gridParams.begin(), gridParams.end(), [&](GridParams &val) {val.nTrees = 50;} );
 	}
 
 	if (gridParams[0].fp == -1) {
 		if (rank == 0)
-			std::cout << "\033[33;1mNo fp factor for oversampling specified. Using default setting: 1 (--fp).\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "No fp factor for oversampling specified. Using default setting: 1 ('params':'fp')." << TXT_NORML << std::endl;
 		std::for_each( gridParams.begin(), gridParams.end(), [&](GridParams &val) {val.fp = 1;} );
 	}
 
 	if (gridParams[0].ratio == -1) {
 		if (rank == 0)
-			std::cout << "\033[33;1mNo ratio for undersampling specified. Using default setting: 1 (--ratio).\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "No ratio for undersampling specified. Using default setting: 1 ('params':'ratio')." << TXT_NORML << std::endl;
 		std::for_each( gridParams.begin(), gridParams.end(), [&](GridParams &val) {val.ratio = 1;} );
 	}
 
 	if (gridParams[0].k == -1) {
 		if (rank == 0)
-			std::cout << "\033[33;1mNo number of nearest neighbour for sample specified. Using default setting: 5 (--k).\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "No number of nearest neighbour for sample specified. Using default setting: 5 ('params':'k')." << TXT_NORML << std::endl;
 		std::for_each( gridParams.begin(), gridParams.end(), [&](GridParams &val) {val.k = 5;} );
 	}
 
 	if (gridParams[0].mtry == -1) {
 		if (rank == 0)
-			std::cout << "\033[33;1mNo mtry argument specified. Using default setting: sqrt(m) (--mtry).\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "No mtry argument specified. Using default setting: sqrt(m) ('params':'mtry')." << TXT_NORML << std::endl;
 		std::for_each( gridParams.begin(), gridParams.end(), [&](GridParams &val) {val.mtry = 0;} );
 	}
 }
@@ -355,7 +359,7 @@ void ArgHandle::fillParams( jsoncons::json * params, std::vector<GridParams> &gr
 void ArgHandle::processMtry( uint32_t mm ) {
 	std::for_each( gridParams.begin(), gridParams.end(), [&](GridParams &val) {
 		if (val.mtry > mm) {
-			std::cout << "\033[33;1mmtry argument must be smaller than the number of attributes m. Using default setting: sqrt(m) (--mtry).\033[0m" << std::endl;
+			std::cout << TXT_BIYLW << "mtry argument must be smaller than the number of features m. Using default setting: sqrt(m) ('params':'mtry')." << TXT_NORML << std::endl;
 			val.mtry = 0;
 		}
 		if (val.mtry == 0)

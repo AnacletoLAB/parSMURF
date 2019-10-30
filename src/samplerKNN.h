@@ -19,6 +19,9 @@ public:
 	void sample();
 	void verbose();
 
+	// TEMP:
+	uint32_t		lineLen;
+
 private:
 	void setup();
 	void minOversample();
@@ -26,7 +29,7 @@ private:
 
 	uint32_t		negToBeGenerated;
 	uint32_t		posToBeGenerated;
-	uint32_t		lineLen;
+	// uint32_t		lineLen;
 	uint32_t 		k; 			// num neighbhors for KNN
 
 };

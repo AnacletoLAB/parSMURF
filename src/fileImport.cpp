@@ -7,16 +7,6 @@ void Importer::import( const ArgHandle * const argHan, std::vector<double>& x, s
 	uint32_t n;
 	uint32_t con = 0;
 
-	// check if datafile is binary or plain text, then open accordingly
-	// No checks on the filename or its length. To be added later, in case...
-	bool isBinary;
-	std::string dataFileExt = argHan->dataFilename.substr( argHan->dataFilename.length() - 4, 4 );
-	if ( dataFileExt == ".bin" ) {
-		isBinary = true;
-		std::cout << "Reading from binary file..." << std::endl;
-	} else
-		isBinary = false;
-
 	std::ifstream labelFile( argHan->labelFilename.c_str(), std::ios::in );
 
 	y.clear();
@@ -28,12 +18,12 @@ void Importer::import( const ArgHandle * const argHan, std::vector<double>& x, s
 
 	double inDouble;
 	uint32_t inUint32;
-	std::cout << "Reading label file..." << std::endl;
+	std::cout << TXT_BIBLU << "Reading label file..." << TXT_NORML << std::endl;
 	while (labelFile >> inUint32) {
 		y.push_back( inUint32 );
 		con++;
 	}
-	std::cout << con << " labels read" << std::endl;
+	std::cout << TXT_BIGRN << con << " labels read" << TXT_NORML << std::endl;
 	n = con;
 	labelFile.close();
 
@@ -43,98 +33,68 @@ void Importer::import( const ArgHandle * const argHan, std::vector<double>& x, s
 		if (!foldFile)
 			throw std::runtime_error( "Error opening fold file." );
 
-		std::cout << "Reading fold file..." << std::endl;
+		std::cout << TXT_BIBLU << "Reading fold file..." << TXT_NORML << std::endl;
 		*nFolds = 0;
 		while (foldFile >> inUint32) {
 			f.push_back( inUint32 );
 			con++;
 			if (f[con - 1] > *nFolds) *nFolds = f[con - 1];
 		}
-		std::cout << con << " values read." << std::endl;
+		std::cout << TXT_BIGRN << con << " values read." << TXT_NORML << std::endl;
 		(*nFolds)++;
-		std::cout << "Total number of folds: " << *nFolds << std::endl;
+		std::cout << TXT_BIGRN << "Total number of folds: " << *nFolds << TXT_NORML << std::endl;
 		foldFile.close();
 		if (con != n)
-			std::cout << "\033[31;1mWARNING: size mismatch between label and fold file!!!\033[0m" << std::endl;
+			std::cout << TXT_BIRED << "WARNING: size mismatch between label and fold file!!!\033[0m" << std::endl;
 	}
+
+	// We should read and import the data from file.
+	// At first, detect the number of features (columns) from data file, then import the data.
+	// Labels must be appended at the end of each line
+
+	// Import data from tsv file. Data file is supposed to be HEADERLESS
+	std::ifstream dataFile( argHan->dataFilename.c_str(), std::ios::in );
+	if (!dataFile)
+		throw std::runtime_error( "Error opening matrix file." );
+
+	// 1) detecting the number of columns
+	std::cout << TXT_BIBLU << "Detecting the number of features from data..." << TXT_NORML << std::endl;
+	// Get the length of the first line
+	char c;
+	while (dataFile.get(c)) {
+		con++;
+		if (c == '\n')
+			break;
+	}
+	// Allocate a buffer and read the first line in its entirety
+	char buffer[con];
+	dataFile.seekg (0, dataFile.beg);
+	dataFile.getline(buffer, con);
+	// split the string according to the standard delimiters of a csv or tsv file (space, tab, comma)
+	std::vector<std::string> splittedBuffer = split_str( buffer, " ,\t" );
+	std::cout << TXT_BIGRN << splittedBuffer.size() << " features detected from data file." << TXT_NORML << std::endl;
+	size_t tempM = splittedBuffer.size();
 
 	con = 0;
-	std::cout << "Reading data file..." << std::endl;
-
-	// Import data from tsv or csv file
-	if (!isBinary) {
-		std::ifstream dataFile( argHan->dataFilename.c_str(), std::ios::in );
-		if (!dataFile)
-			throw std::runtime_error( "Error opening matrix file." );
-
-		while (dataFile >> inDouble) {
-			x.push_back( inDouble );
-			con++;
+	size_t labIdx = 0;
+	std::cout << TXT_BIBLU << "Reading data file..." << TXT_NORML << std::endl;
+	dataFile.seekg (0, dataFile.beg);
+	while (dataFile >> inDouble) {
+		x.push_back( inDouble );
+		con++;
+		if (!(con % tempM)) {
+			if (y[labIdx++] > 0)
+				x.push_back(1.0);
+			else
+				x.push_back(2.0);
 		}
-		dataFile.close();
-	} else {
-		std::ifstream dataFile( argHan->dataFilename.c_str(), std::ios::binary );
-		if (!dataFile)
-			throw std::runtime_error( "Error opening matrix file." );
-
-		while (dataFile.read( reinterpret_cast<char*>( &inDouble ), sizeof(double) )) {
-			x.push_back( inDouble );
-			con++;
-		}
-		dataFile.close();
 	}
+	dataFile.close();
 
-	std::cout << con << " values read." << std::endl;
+	std::cout << TXT_BIGRN << con << " values read from data file." << TXT_NORML << std::endl;
 
 	if (con % n != 0)
-		std::cout << "\033[31;1mWARNING: size mismatch between label and data file!!!\033[0m" << std::endl;
-
-}
-
-void Importer::test( std::string baseFilename ) {
-	std::vector<double> x_tsv( 10 );
-	std::vector<double> x_bin( 10 );
-	std::string tsvFilename = baseFilename + ".txt";
-	std::string binFilename = baseFilename + ".bin";
-
-	double inDouble;
-	uint32_t tsv_con = 0;
-	uint32_t bin_con = 0;
-	Timer tsv_tt, bin_tt;
-
-	// Reading tsv
-	std::ifstream tsvFile( tsvFilename.c_str(), std::ios::in );
-	if (!tsvFile)
-		throw std::runtime_error( "Error opening tsv file." );
-
-	tsv_tt.startTime();
-	while (tsvFile >> inDouble) {
-		x_tsv.push_back( inDouble );
-		tsv_con++;
-	}
-	tsvFile.close();
-	tsv_tt.endTime();
-	std::cout << "Import from tsv - time: " << tsv_tt.duration() << std::endl;
-
-	// Reading binary
-	std::ifstream binFile( binFilename.c_str(), std::ios::binary );
-	if (!binFile)
-		throw std::runtime_error( "Error opening bin file." );
-
-	bin_tt.startTime();
-	while (binFile.read( reinterpret_cast<char*>( &inDouble ), sizeof(double) )) {
-		x_bin.push_back( inDouble );
-		bin_con++;
-	}
-	binFile.close();
-	bin_tt.endTime();
-	std::cout << "Import from bin - time: " << bin_tt.duration() << std::endl;
-
-	std::cout << "tsv count: " << tsv_con << " - bin count: " << bin_con << std::endl;
-	for ( uint32_t ii = 0; ii < tsv_con; ii++ ) {
-		if (x_tsv[ii] != x_bin[ii])
-			std::cout << "Mismatch at: " << ii << " - tsv: " << x_tsv[ii] << " - bin: " << x_bin[ii] << " - DIFF: " << x_tsv[ii] - x_bin[ii] << std::endl;
-	}
+		std::cout << TXT_BIRED << "WARNING: size mismatch between label and data file!!!" << TXT_NORML << std::endl;
 }
 
 void Importer::importParameters( std::vector<GridParams> & gridParams ) {
@@ -156,7 +116,7 @@ void Importer::importParameters( std::vector<GridParams> & gridParams ) {
 		if (inStr[0] == '#')
 			continue;
 
-		splittedStr = split_str( inStr );
+		splittedStr = split_str( inStr, " " );
 		// nRun, nParts, fp, ratio, k, numTrees, mtry <<-- from foldX.dat
 		// becomes:
 		// nFold, nParts, fp, ratio, k, numTrees, mtry <<-- expected in params.dat

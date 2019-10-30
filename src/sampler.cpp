@@ -29,28 +29,34 @@ void Sampler::minOversample() {}
 void Sampler::majUndersample() {}
 
 void Sampler::getSample( const uint32_t numSamp, double * const sample ) {
-	for (uint32_t i = 0; i < m + 1; i++)
-		sample[i] = x[numSamp + n * i];
+	// for (uint32_t i = 0; i < m + 1; i++)
+	// 	sample[i] = x[numSamp + n * i];
+	std::memcpy(sample, &x[numSamp * (m + 1)], (m + 1) * sizeof(double));
 }
 
-void Sampler::setSample( const uint32_t numCol, double * const sample, const uint32_t lineLen ) {
+void Sampler::setSample( const uint32_t numRow, double * const sample, const uint32_t lineLen ) {
 	double * dataOut = trngData;
-	for (uint32_t i = 0; i < m + 1; i++)
-		dataOut[numCol + lineLen * i] = sample[i];
+	// for (uint32_t i = 0; i < m + 1; i++)
+	// 	dataOut[numCol + lineLen * i] = sample[i];
+	std::memcpy(&dataOut[numRow * (m + 1)], sample, (m + 1) * sizeof(double));
 }
 
-void Sampler::copySample( const uint32_t nSam, const uint32_t nCol, const uint32_t lineLen ) {
+void Sampler::copySample( const uint32_t numSamp, const uint32_t numRow, const uint32_t lineLen ) {
 	double * dataOut = trngData;
-	for (uint32_t i = 0; i < m + 1; i++)
-		dataOut[nCol + lineLen * i] = x[nSam + n * i];
+	// for (uint32_t i = 0; i < m + 1; i++)
+	// 	dataOut[nCol + lineLen * i] = x[nSam + n * i];
+	std::memcpy(&dataOut[numRow * (m + 1)], &x[numSamp * (m + 1)], (m + 1) * sizeof(double));
 }
 
-void Sampler::copySample( const double * const x, const uint32_t nSam, const uint32_t nCol, const uint32_t lineLen ) {
+void Sampler::copySample( const double * const x, const uint32_t numSamp, const uint32_t numRow, const uint32_t lineLen ) {
 	double * dataOut = testData;
-	for (uint32_t i = 0; i < m; i++)
-		dataOut[nCol + lineLen * i] = x[nSam + n * i];
+	// for (uint32_t i = 0; i < m; i++)
+	// 	dataOut[nCol + lineLen * i] = x[nSam + n * i];
+	// NOTE: memcpy should copy m values, not m + 1, since the last one is set to zero after the mem copy
+	std::memcpy(&dataOut[numRow * (m + 1)], &x[numSamp * (m + 1)], (m + 1) * sizeof(double));
 	// Label must be set to 0!
-	dataOut[nCol + lineLen * m] = 0;
+	// dataOut[nCol + lineLen * m] = 0;
+	dataOut[(numRow + 1) * (m + 1) - 1] = 0;
 }
 
 void Sampler::setPartition( const uint32_t currentPart ) {
@@ -88,61 +94,40 @@ void Sampler::copyTestSet( const double * const x ) {
 		copySample( x, part->testNegIdx[i], i + part->testPosNum, linLen );
 	}
 	// DEBUG PRINT
-	/*std::cout << std::endl;
-	std::cout << "Raw part->testData view:" << std::endl;
-	for (uint32_t i = 0; i < linLen * (m + 1); i++) {
-		std::cout << testData[i] << " ";
-		if ((i + 1) % (linLen) == 0) std::cout << std::endl;
-	}
-	std::cout << std::endl;*/
+	// printData(testData, nullptr, linLen, m, false);
 }
 
-void Sampler::accumulateResInProbVect( const std::vector<std::vector<std::vector<double>>>& predictions,
-		double * const class1, double * const class2 ) {
+// void Sampler::accumulateResInProbVect( const std::vector<std::vector<std::vector<double>>>& predictions,
+// 		double * const class1, double * const class2 ) {
+//
+// 	uint32_t cc = 0;
+// 	for (uint32_t i = 0; i < part->testPosNum; i++) {
+// 		class1[part->testPosIdx[i]] += predictions[0][cc][0];
+// 		class2[part->testPosIdx[i]] += predictions[0][cc][1];
+// 		cc++;
+// 	}
+// 	for (uint32_t i = 0; i < part->testNegNum; i++) {
+// 		class1[part->testNegIdx[i]] += predictions[0][cc][0];
+// 		class2[part->testNegIdx[i]] += predictions[0][cc][1];
+// 		cc++;
+// 	}
+// }
 
-	uint32_t cc = 0;
-	for (uint32_t i = 0; i < part->testPosNum; i++) {
-		class1[part->testPosIdx[i]] += predictions[0][cc][0];
-		class2[part->testPosIdx[i]] += predictions[0][cc][1];
-		cc++;
-	}
-	for (uint32_t i = 0; i < part->testNegNum; i++) {
-		class1[part->testNegIdx[i]] += predictions[0][cc][0];
-		class2[part->testNegIdx[i]] += predictions[0][cc][1];
-		cc++;
-	}
-}
-
-// Guess what: now this function and accumulateResInProbVect are identical...
 void Sampler::accumulateAndDivideResInProbVect( const std::vector<std::vector<std::vector<double>>>& predictions,
 		double * const class1, double * const class2, const uint32_t nPart ) {
 
 	uint32_t cc = 0;
-	//std::cout << "In Sampler::accumulateAndDivideResInProbVect - nPart: " << nPart << std::endl;
-	//double divider = 1.0 / (double)nPart;
+	// std::cout << "In Sampler::accumulateAndDivideResInProbVect - nPart: " << nPart << std::endl;
+	double divider = 1.0 / (double)nPart;
 	for (uint32_t i = 0; i < part->testPosNum; i++) {
-		// class1[part->testPosIdx[i]] += ( predictions[0][cc][0] * divider );
-		// class2[part->testPosIdx[i]] += ( predictions[0][cc][1] * divider );
-		class1[part->testPosIdx[i]] += predictions[0][cc][0];
-		class2[part->testPosIdx[i]] += predictions[0][cc][1];
+		class1[part->testPosIdx[i]] += ( predictions[0][cc][0] * divider );
+		class2[part->testPosIdx[i]] += ( predictions[0][cc][1] * divider );
 		cc++;
 	}
 	for (uint32_t i = 0; i < part->testNegNum; i++) {
-		// class1[part->testNegIdx[i]] += ( predictions[0][cc][0] * divider );
-		// class2[part->testNegIdx[i]] += ( predictions[0][cc][1] * divider );
-		class1[part->testNegIdx[i]] += predictions[0][cc][0];
-		class2[part->testNegIdx[i]] += predictions[0][cc][1];
+		class1[part->testNegIdx[i]] += ( predictions[0][cc][0] * divider );
+		class2[part->testNegIdx[i]] += ( predictions[0][cc][1] * divider );
 		cc++;
 	}
-
-	// // Scale predictions
-	// for (uint32_t i = 0; i < part->testPosNum; i++) {
-	// 	class1[part->testPosIdx[i]] *= divider;
-	// 	class2[part->testPosIdx[i]] *= divider;
-	// }
-	// for (uint32_t i = 0; i < part->testNegNum; i++) {
-	// 	class1[part->testNegIdx[i]] *= divider;
-	// 	class2[part->testNegIdx[i]] *= divider;
-	// }
 
 }

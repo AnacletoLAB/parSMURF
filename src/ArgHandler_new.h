@@ -61,13 +61,13 @@ protected:
 
 	template <typename T>
 	T getFromJson( jsoncons::json * jStrct, std::string field, T currValue ) {
-		if (!(jStrct->has_key(field)))
+		if (!(jStrct->contains(field)))
 			return currValue;
 
 		T toBeReturned;
 		bool okay = false;
 		try {
-			toBeReturned = jStrct->get( field ).as<T>();
+			toBeReturned = jStrct->get_with_default( field ).as<T>();
 			okay = true;
 		} catch (const std::exception& e) {
 			std::cout << "Error while getting " << field << " from json: " << e.what() << std::endl;

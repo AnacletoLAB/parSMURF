@@ -18,7 +18,5 @@ public:
 
 	static void import( const ArgHandle * const argHan, std::vector<double>& x, std::vector<uint32_t>& y, std::vector<uint32_t>& f, uint32_t * const nFolds );
 
-	static void test( std::string baseFilename );
-
 	static void importParameters( std::vector<GridParams> & gridParams );
 };

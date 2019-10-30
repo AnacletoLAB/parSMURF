@@ -85,11 +85,15 @@ void SamplerKNNMPI::accumulateTempProb( const std::vector<std::vector<std::vecto
 
 
 void SamplerKNNMPI::getSample( const uint32_t numSamp, double * const sample ) {
-	for (uint32_t i = 0; i < m + 1; i++)
-		sample[i] = x[numSamp + lineLen * i];
+	// for (uint32_t i = 0; i < m + 1; i++)
+	// 	sample[i] = x[numSamp + lineLen * i];
+	std::memcpy(sample, &x[numSamp * (m + 1)], (m + 1) * sizeof(double));
+
 }
 
-void SamplerKNNMPI::setSample( const uint32_t numCol, const double * const sample ) {
-	for (uint32_t i = 0; i < m + 1; i++)
-		x[numCol + lineLen * i] = sample[i];
+void SamplerKNNMPI::setSample( const uint32_t numRow, const double * const sample ) {
+	// for (uint32_t i = 0; i < m + 1; i++)
+	// 	x[numCol + lineLen * i] = sample[i];
+	std::memcpy(&x[numRow * (m + 1)], sample, (m + 1) * sizeof(double));
+
 }

@@ -6,10 +6,10 @@ Folds::Folds( uint32_t numberOfFolds, uint32_t classSize, const uint32_t * label
 		classSize( classSize ), nFolds( numberOfFolds ), labels( labels ),
 		fromFile( ff ), totPos( 0 ), totNeg( 0 ), randomFold( randomFold ) {
 
-	nPos = 		new uint32_t[nFolds];
-	nNeg = 		new uint32_t[nFolds];
-	foldsIdx = 	new uint32_t[nFolds + 1];
-	folds =		new uint32_t[classSize];
+	nPos		= new uint32_t[nFolds];
+	nNeg		= new uint32_t[nFolds];
+	foldsIdx	= new uint32_t[nFolds + 1];
+	folds		= new uint32_t[classSize];
 
 }
 
@@ -80,7 +80,6 @@ void Folds::computeFolds() {
 
 	} else {
 		// Reading the folds from file
-		// Total complexity is 3 * nn... can we do better?
 
 		// count of positive labels ( == 1) of labels array
 		totPos = (uint32_t) std::count_if( labels, labels + classSize, []( int nn ){return nn >= 1; } );

@@ -22,7 +22,7 @@ void recvThrd( uint32_t totThrd, uint32_t currentThrd, uint32_t rank_, uint32_t 
 			MPI_Recv( trngData, trngDataSize, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &stat2 );
 			MPI_Get_count( &stat2, MPI_DOUBLE, &trngSz );
 			if (MPIverbose) {
-				std::cout << "\033[35;1m   rank: " << rank_ << " thread: " << currentThrd << " received training data for part: " << (uint32_t) trngData[1] <<". Sending ack to master proc.\033[0m" << std::endl;
+				std::cout << "\033[35;1m   rank: " << rank_ << " thread: " << currentThrd << " received training data for part: " << (uint32_t) trngData[1] <<". Sending ack to master proc." << TXT_NORML << std::endl;
 			}
 			//std::cout << "RANK " << rank_ << " THRD " << currentThrd << " received part: " << trngData[1] << " having actual size of " << trngData[2] << std::endl;
 			MPI_Send( &trngSz, 1, MPI_UNSIGNED, 0, 0, MPI_COMM_WORLD );
@@ -48,7 +48,8 @@ void recvThrd( uint32_t totThrd, uint32_t currentThrd, uint32_t rank_, uint32_t 
 		nomi[m] = "Labels";
 
 		std::vector<double> trngDataCopy( trngSize * (m + 1) );
-		memcpy(trngDataCopy.data(), trngData_, trngSize * (m + 1) * sizeof(double) );
+		// memcpy(trngDataCopy.data(), trngData_, trngSize * (m + 1) * sizeof(double) );
+		transposeMatrix(trngDataCopy.data(), trngData_, trngSize, m + 1);
 		std::unique_ptr<Data> input_data( new DataDouble( trngDataCopy, nomi, trngSize, m + 1 ) );
 		rfRanger rf( m, false, std::move(input_data), numTrees, mtry, rfThr, seedCustom );
 		rf.train( false );
@@ -57,7 +58,8 @@ void recvThrd( uint32_t totThrd, uint32_t currentThrd, uint32_t rank_, uint32_t 
 		if (wmode == MODE_CV) {
 			nomi[m] = "dependent";
 			std::vector<double> testDataCopy( testSize * (m + 1) );
-			memcpy(testDataCopy.data(), testData, testSize * (m + 1) * sizeof(double) );
+			// memcpy(testDataCopy.data(), testData, testSize * (m + 1) * sizeof(double) );
+			transposeMatrix(testDataCopy.data(), testData, testSize, m + 1);
 			std::unique_ptr<Data> test_data( new DataDouble( testDataCopy, nomi, testSize, m + 1 ) );
 			rfRanger rfTest( rf.forest, m, true, std::move(test_data), numTrees, mtry, rfThr, seedCustom );
 			rfTest.predict( false );
@@ -139,7 +141,8 @@ void predictRecvThrd( uint32_t totThrd, uint32_t currentThrd, uint32_t rank_, ui
 		std::string forestFilename = forestDirname + "/" + std::to_string( currentPart ) + ".out.forest";
 
 		std::vector<double> testDataCopy( testSize * (m + 1) );
-		memcpy(testDataCopy.data(), testData, testSize * (m + 1) * sizeof(double) );
+		// memcpy(testDataCopy.data(), testData, testSize * (m + 1) * sizeof(double) );
+		transposeMatrix(testDataCopy.data(), testData, testSize, m + 1);
 		std::unique_ptr<Data> test_data( new DataDouble( testDataCopy, nomi, testSize, m + 1 ) );
 		rfRanger rfTest( forestFilename, m, true, std::move(test_data), numTrees, mtry, rfThr, seedCustom );
 		rfTest.predict( false );

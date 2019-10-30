@@ -2,8 +2,6 @@
 // Alessandro Petrini, 2018-2019
 #include "curves.h"
 
-// TODO: fix AUROC inconsistent results (on linux only)
-
 Curves::Curves() : preds( nullptr ), labls( std::vector<uint32_t>(0) ) {}
 
 Curves::Curves( const std::vector<uint32_t> & labels, const double * const predictions ) :
@@ -49,9 +47,6 @@ double Curves::evalAUROC_alt() {
 	uint32_t tempFP = 0;
 	float prevPred = -100.0;
 
-	// printVectC<uint8_t>( tempLabs );
-	// printVect<float>( tempPreds );
-
 	// - in a loop
 	uint32_t idx = 0;
 	uint32_t partialIdx = 0;
@@ -74,8 +69,6 @@ double Curves::evalAUROC_alt() {
 	recall2.resize( partialIdx + 1 );
 	fpr.resize( partialIdx + 1 );
 
-	std::cout << "PartialIdx: " << partialIdx << std::endl;
-
 	// - calculate AUROC area by trapezoidal integration
 	return traps_integrate<float>( fpr, recall2 );
 	// - return AUROC area
@@ -93,13 +86,6 @@ double Curves::evalAUPRC() {
 	FP = cumulSum<uint32_t, uint8_t>( tempLabs );
 	FP[FP.size() - 1] = totN;
 
-	// uint32_t idxTP = 0;
-	// for (size_t i = 0; i < TP.size(); i++) {
-	// 	if (TP[idxTP] == TP[TP.size() - 1])
-	// 		break;
-	// 	idxTP++;
-	// }
-
 	// Calculate precision and recall
 	precision.clear();
 	recall.clear();
@@ -109,12 +95,6 @@ double Curves::evalAUPRC() {
 		precision.push_back( TP[i] / (double) (TP[i] + FP[i]) );
 		recall.push_back( TP[i] / (double) totP );
 	}
-	//
-	// recall.push_back( 1.0 );
-	// precision.push_back( 0.0 );
-
-	// recall.resize( idxTP + 2 );
-	// precision.resize( idxTP + 2 );
 
 	return traps_integrate<double>( recall, precision );
 }
@@ -123,7 +103,6 @@ double Curves::evalAUPRC() {
 double Curves::evalAUROC_ok() {
 	std::vector<uint8_t> tempLabs2 = tempLabs;
 	std::vector<float>  tempPreds2 = tempPreds;
-//	filter_dups<float, uint8_t>( tempPreds2, tempLabs2 );
 	alphas.clear();
 	alphas = tempPreds2;
 
@@ -132,24 +111,12 @@ double Curves::evalAUROC_ok() {
 	FP = cumulSum<uint32_t, uint8_t>( tempLabs2 );
 	FP[FP.size() - 1] = totN;
 
-	// uint32_t idxTP = 0;
-	// for (size_t i = 0; i < TP.size(); i++) {
-	// 	if (TP[idxTP] == TP[TP.size() - 1])
-	// 		break;
-	// 	idxTP++;
-	// }
-
 	fpr.clear();
 	recall2.clear();
-	// recall2.push_back( 0.0 );
-	// fpr.push_back( 0.0 );
 	for (size_t i = 0; i < FP.size(); i++) {
 		fpr.push_back( FP[i] / (float) totN );
 		recall2.push_back( TP[i] / (float) totP );
 	}
-
-	// fpr.push_back( 1.0f );
-	// recall2.push_back( 0.0 );
 
 	return traps_integrate<float>( fpr, recall2 );
 }

@@ -68,8 +68,7 @@ int main( int argc, char **argv ) {
 	if (!commandLine.simulate) {
 		Importer::import( &commandLine, xx, yy, ff, &nFolds );
 		nn = yy.size();
-		mm = xx.size() / yy.size();
-		std::for_each( yy.begin(), yy.end(), [&xx]( uint32_t nnn ) mutable { if (nnn > 0) xx.push_back( 1.0 ); else xx.push_back( 2.0 ); } );
+		mm = xx.size() / yy.size() - 1;
 		commonParams.nn = nn;
 		commonParams.mm = mm;
 		commonParams.nFolds = nFolds;

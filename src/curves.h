@@ -17,7 +17,6 @@ public:
 	double evalAUROC_ok();
 	double evalAUPRC();
 
-//protected:
 	template <typename T, typename S>
 		void apply_permutation_in_place( std::vector<T> & vec, std::vector<S> & vec2, const std::vector<std::size_t> & p );
 	template <typename T>
@@ -34,8 +33,8 @@ private:
 
 	std::vector<float>			alphas;
 
-	uint32_t					totP;
-	uint32_t					totN;
+	uint32_t					totP = 0;
+	uint32_t					totN = 0;
 	std::vector<double>			precision;
 	std::vector<double>			recall;
 	std::vector<float>			recall2;
@@ -90,22 +89,6 @@ void Curves::apply_permutation_in_place( std::vector<T> & vec, std::vector<S> & 
 
 template <typename T, typename S>
 void Curves::filter_dups( std::vector<T> & vec, std::vector<S> & vec2 ) {
-
-	// https://en.cppreference.com/w/cpp/algorithm/unique#Possible_implementation
-	/*template<class ForwardIt>
-	ForwardIt unique(ForwardIt first, ForwardIt last) {
-	    if (first == last)
-	        return last;
-
-	    ForwardIt result = first;
-	    while (++first != last) {
-	        if (!(*result == *first) && ++result != first) {
-	            *result = std::move(*first);
-	        }
-	    }
-	    return ++result;
-	}*/
-
 	size_t vecIdx = 0;				// vecIdx := result
 	size_t currIdx = 0;				// currIdx := first
 	size_t vecSize = vec.size();
@@ -118,38 +101,6 @@ void Curves::filter_dups( std::vector<T> & vec, std::vector<S> & vec2 ) {
 	}
 	vec.resize( vecIdx + 1 );
 	vec2.resize( vecIdx + 1 );
-	//std::cout << "vecIdx: " << vecIdx << " - currIdx: " << currIdx << std::endl;
-
-	/*std::size_t arrIdx = 0;				// index in the output array (incremented always by one)
-	std::size_t currIdx = 0;			// index in the input array (incremented by the number of the copies of the current element)
-	std::size_t maxSize = vec.size();	// decremented everytime copies are found
-	do {
-		if (vec[currIdx] != vec[currIdx + 1]) {
-			vec[arrIdx] = vec[currIdx];
-			vec2[arrIdx] = vec2[currIdx];
-			arrIdx++;
-			currIdx++;
-			continue;
-		} else {
-			// count the duplicates
-			uint32_t countr = 0;
-			size_t countrIdx = currIdx;
-			while (vec[currIdx] == vec[countrIdx++]) {
-				countr++;
-				if (countrIdx >= maxSize)
-					break;
-			}
-			// replacing the content of vec2 and vec arrays and adjusting the indexes
-			vec[arrIdx] = vec[currIdx];
-			vec2[arrIdx] = vec2[currIdx];//newVal;
-			arrIdx++;
-			currIdx += countr;
-			maxSize -= (countr - 1);
-		}
-	} while ((arrIdx < maxSize) & (currIdx < vec.size() - 1));
-	vec.resize( maxSize );
-	vec2.resize( maxSize );
-	*/
 }
 
 template <typename T, typename S>

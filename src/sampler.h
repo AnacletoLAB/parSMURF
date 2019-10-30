@@ -2,6 +2,7 @@
 // Alessandro Petrini, 2018-2019
 #pragma once
 #include <vector>
+#include <cstring>
 #include "HyperSMURFUtils.h"
 #include "folds.h"
 #include "testtraindivider.h"
@@ -42,8 +43,8 @@ public:
 	virtual void sample();
 	void setPartition( const uint32_t currentPart );
 	void copyTestSet( const double * const x );
-	void accumulateResInProbVect( const std::vector<std::vector<std::vector<double>>>& predictions,
-			double * const class1, double * const class2 );
+	// void accumulateResInProbVect( const std::vector<std::vector<std::vector<double>>>& predictions,
+	// 		double * const class1, double * const class2 );
 	void accumulateAndDivideResInProbVect( const std::vector<std::vector<std::vector<double>>>& predictions,
 			double * const class1, double * const class2, const uint32_t nPart );
 

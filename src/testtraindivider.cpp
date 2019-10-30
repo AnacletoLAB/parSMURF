@@ -66,7 +66,7 @@ TestTrainDivider::TestTrainDivider( const Folds * const folds, const uint8_t wmo
 			if (k == i)
 				continue;
 			firstElement = folds->foldsIdx[k];
-			for (size_t j = 0; j < folds->nPos[i] + folds->nNeg[i]; j++) {
+			for (size_t j = 0; j < folds->nPos[k] + folds->nNeg[k]; j++) {
 				if (folds->labels[folds->folds[firstElement + j]] < 1) {
 					trngNegIdx[i][negIdx] = folds->folds[firstElement + j];
 					negIdx++;
@@ -122,6 +122,7 @@ TestTrainDivider::~TestTrainDivider() {
 	delete[] testPosIdx;
 }
 
+// TODO: this must be accurately tested!!!!
 TestTrainDivider::TestTrainDivider( const Folds * const folds, const uint8_t wmode, uint32_t foldToJump ) :
 		folds( folds ), wmode( wmode ), nFolds( folds->nFolds - 1 ) {
 
@@ -166,26 +167,54 @@ TestTrainDivider::TestTrainDivider( const Folds * const folds, const uint8_t wmo
 		trngPosIdx[i] = new uint32_t[trngPosNum[i]];		checkPtr<uint32_t>( trngPosIdx[i], __FILE__, __LINE__ );
 		trngNegIdx[i] = new uint32_t[trngNegNum[i]];		checkPtr<uint32_t>( trngNegIdx[i], __FILE__, __LINE__ );
 
-		std::memcpy( testPosIdx[i], &(folds->folds[firstElement]), testPosNum[i] * sizeof( uint32_t ) );
-		std::memcpy( testNegIdx[i], &(folds->folds[firstElement + testPosNum[i]]), testNegNum[i] * sizeof( uint32_t ) );
+		// Copy the test set, splitted in positive and negative examples
+		// std::memcpy( testPosIdx[i], &(folds->folds[firstElement]), testPosNum[i] * sizeof( uint32_t ) );
+		// std::memcpy( testNegIdx[i], &(folds->folds[firstElement + testPosNum[i]]), testNegNum[i] * sizeof( uint32_t ) );
+		size_t posIdx = 0, negIdx = 0;
+		for (size_t j = 0; j < testPosNum[i] + testNegNum[i]; j++) {
+			if (folds->labels[folds->folds[firstElement + j]] < 1) {
+				testNegIdx[i][negIdx] = folds->folds[firstElement + j];
+				negIdx++;
+			} else {
+				testPosIdx[i][posIdx] = folds->folds[firstElement + j];
+				posIdx++;
+			}
+		}
 
-		uint32_t elemCounter = 0;
+		// Now copy the training set, again splitted in positive and negative examples
+		// uint32_t elemCounter = 0;
+		// for (uint32_t k = 0; k < folds->nFolds; k++) {
+		// 	if ((k == currFoldIdx) | (k == foldToJump))
+		// 		continue;
+		// 	firstElement = folds->foldsIdx[k];
+		// 	std::memcpy( trngPosIdx[i] + elemCounter, &(folds->folds[firstElement]), folds->nPos[k] * sizeof( uint32_t ) );
+		// 	elemCounter += folds->nPos[k];
+		// }
+
+		posIdx = 0, negIdx = 0;
 		for (uint32_t k = 0; k < folds->nFolds; k++) {
 			if ((k == currFoldIdx) | (k == foldToJump))
 				continue;
 			firstElement = folds->foldsIdx[k];
-			std::memcpy( trngPosIdx[i] + elemCounter, &(folds->folds[firstElement]), folds->nPos[k] * sizeof( uint32_t ) );
-			elemCounter += folds->nPos[k];
+			for (size_t j = 0; j < folds->nPos[k] + folds->nNeg[k]; j++) {
+				if (folds->labels[folds->folds[firstElement + j]] < 1) {
+					trngNegIdx[i][negIdx] = folds->folds[firstElement + j];
+					negIdx++;
+				} else {
+					trngPosIdx[i][posIdx] = folds->folds[firstElement + j];
+					posIdx++;
+				}
+			}
 		}
 
-		elemCounter = 0;
-		for (uint32_t k = 0; k < folds->nFolds; k++) {
-			if ((k == currFoldIdx) | (k == foldToJump))
-				continue;
-			firstElement = folds->foldsIdx[k] + folds->nPos[k];
-			std::memcpy( trngNegIdx[i] + elemCounter, &(folds->folds[firstElement]), folds->nNeg[k] * sizeof( uint32_t ) );
-			elemCounter += folds->nNeg[k];
-		}
+		// elemCounter = 0;
+		// for (uint32_t k = 0; k < folds->nFolds; k++) {
+		// 	if ((k == currFoldIdx) | (k == foldToJump))
+		// 		continue;
+		// 	firstElement = folds->foldsIdx[k] + folds->nPos[k];
+		// 	std::memcpy( trngNegIdx[i] + elemCounter, &(folds->folds[firstElement]), folds->nNeg[k] * sizeof( uint32_t ) );
+		// 	elemCounter += folds->nNeg[k];
+		// }
 
 		// Shuffle of the negative set set
 		//std::random_shuffle( trngNegIdx[i], trngNegIdx[i] + trngNegNum[i] );
@@ -204,8 +233,6 @@ TestTrainDivider::TestTrainDivider( const Folds * const folds, const uint8_t wmo
 		std::memcpy( trngPosIdx[0], testPosIdx[0], testPosNum[0] * sizeof(uint32_t) );
 		std::memcpy( trngNegIdx[0], testNegIdx[0], testNegNum[0] * sizeof(uint32_t) );
 	}
-
-
 }
 
 void TestTrainDivider::verbose( uint32_t whichFold ) {

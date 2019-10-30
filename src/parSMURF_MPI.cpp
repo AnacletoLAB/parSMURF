@@ -35,6 +35,7 @@ int main( int argc, char **argv ) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
 	////EasyLogging++
+	checkLoggerConfFile();
     el::Configurations conf("logger.conf");
     el::Loggers::reconfigureLogger("default", conf);
     el::Loggers::reconfigureAllLoggers(conf);
@@ -43,7 +44,7 @@ int main( int argc, char **argv ) {
 	// and stored into a struct
 	std::vector<GridParams> gridParams;
 	ArgHandle commandLine( argc, argv, gridParams );
-	commandLine.processCommandLine( 0 );
+	commandLine.processCommandLine( rank );
 
 	CommonParams commonParams;
 	uint32_t nn					= commonParams.nn			= commandLine.n;
@@ -94,14 +95,16 @@ int main( int argc, char **argv ) {
 		if (!commandLine.simulate) {
 			Importer::import( &commandLine, xx, yy, ff, &nFolds );
 			nn = commonParams.nn = yy.size();
-			mm = commonParams.mm = xx.size() / yy.size();
-			std::for_each( yy.begin(), yy.end(), [&xx]( uint32_t nnn ) mutable { if (nnn > 0) xx.push_back( 1.0 ); else xx.push_back( 2.0 ); } );
+			mm = commonParams.mm = xx.size() / yy.size() - 1;
+			// Conversion to Ranger label format moved in Importer::import()
+			// std::for_each( yy.begin(), yy.end(), [&xx]( uint32_t nnn ) mutable { if (nnn > 0) xx.push_back( 1.0 ); else xx.push_back( 2.0 ); } );
 		}
 		else
 			generateRandomSet( nn, mm, xx, yy, commandLine.prob, seed );
 
 		if (commonParams.customCV && (gridParams.size() != nFolds)) {
 			std::cout << TXT_BIRED << "Mismatch between nFolds and overidden fold number from params.dat. Aborting..." << TXT_NORML << std::endl;
+			MPI_Finalize();
 			exit( -1 );
 		}
 	}

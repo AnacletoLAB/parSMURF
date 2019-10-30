@@ -94,7 +94,7 @@ void SamplerKNN::minOversample() {
 		for (uint32_t j = 0; j < part->fp; j++) {
 			idx = rand() % (localk - 1);
 			//alpha = rand() / randMax;					// randMax is already a double
-			getSample( pos[nnIdx[idx]], temp.data() );	// GG, is it right now?
+			getSample( pos[nnIdx[idx]], temp.data() );
 			for (uint32_t l = 0; l < m; l++) {			// to m and not to m+1, because...
 				alpha = rand() / randMax;
 				temp[l] = temp[l] * alpha + queryPt[l] * (1 - alpha);
@@ -138,8 +138,6 @@ void SamplerKNN::majUndersample() {
 
 	// and save the size of the negative set
 	trngNeg = negToBeGenerated;
-
-
 }
 
 void SamplerKNN::verbose() {
@@ -151,7 +149,8 @@ void SamplerKNN::verbose() {
 	for (uint32_t i = 0; i < posForOverSmpl; i++) {
 		std::cout << std::setw( 4 ) << i << " | " << std::setw( 4 ) << pos[i] << " | ";
 		for (uint32_t k = 0; k < m + 1; k++) {
-			std::cout << std::setw( 10 ) << dataOut[i + lineLen * k] << " | ";
+			//std::cout << std::setw( 10 ) << dataOut[i + lineLen * k] << " | ";
+			std::cout << std::setw( 10 ) << dataOut[i * (m + 1) + k] << " | ";
 		}
 		std::cout << std::endl;
 	}
@@ -160,7 +159,8 @@ void SamplerKNN::verbose() {
 	for (uint32_t i = posForOverSmpl; i < trngPos; i++) {
 		std::cout << std::setw( 4 ) << i << " | " << std::setw( 4 ) << "xxx" << " | ";
 		for (uint32_t k = 0; k < m + 1; k++) {
-			std::cout << std::setw( 10 ) << dataOut[i + lineLen * k] << " | ";
+			// std::cout << std::setw( 10 ) << dataOut[i + lineLen * k] << " | ";
+			std::cout << std::setw( 10 ) << dataOut[i * (m + 1) + k] << " | ";
 		}
 		std::cout << std::endl;
 	}
@@ -171,7 +171,8 @@ void SamplerKNN::verbose() {
 	for (uint32_t i = 0; i < trngNeg; i++) {
 		std::cout << std::setw( 4 ) << i + trngPos << " | " << std::setw( 4 ) << neg[i] << " | ";
 		for (uint32_t k = 0; k < m + 1; k++) {
-			std::cout << std::setw( 10 ) << dataOut[i + lineLen * k] << " | ";
+			// std::cout << std::setw( 10 ) << dataOut[i + lineLen * k] << " | ";
+			std::cout << std::setw( 10 ) << dataOut[i * (m + 1) + k] << " | ";
 		}
 		std::cout << std::endl;
 	}

@@ -14,7 +14,8 @@ MPIHelper::MPIHelper( uint32_t worldsz, uint32_t nFolds, uint32_t ensT, uint32_t
 
 	// check...
 	if (numberOfWorkingProcs <= 0) {
-		std::cout << "\033[31;1mNot enough working processes! (exec as mpirun -np XX)\033[0m" << std::endl;
+		std::cout << TXT_BIRED << "Not enough working processes! (exec as mpirun -np XX)" << TXT_NORML << std::endl;
+		MPI_Finalize();
 		exit(-1);
 	}
 
@@ -43,7 +44,7 @@ void MPIHelper::broadcastGlobVars( int rank, uint32_t * const nn, uint32_t * con
 		globVars[2] = *nFolds;
 	}
 	if ((rank == 0) & (MPIverbose)) {
-		std::cout << "\033[35;1mBroadcasting global variables: nn = " << *nn << " - mm = " << *mm << " - nFolds = " << *nFolds << "\033[0m" << std::endl;
+		std::cout << TXT_BIPRP << "Broadcasting global variables: nn = " << *nn << " - mm = " << *mm << " - nFolds = " << *nFolds << TXT_NORML << std::endl;
 	}
 	MPI_Bcast( globVars, 3, MPI_UNSIGNED, 0, MPI_COMM_WORLD );
 	MPI_Barrier( MPI_COMM_WORLD );
@@ -53,10 +54,10 @@ void MPIHelper::broadcastGlobVars( int rank, uint32_t * const nn, uint32_t * con
 		*nFolds = globVars[2];
 	}
 	if (MPIverbose) {
-		std::cout << "\033[35;1mRank " << rank << " received from broadcast: nn = " << *nn << " - mm = " << *mm << " - nFolds = " << *nFolds << ".\033[0m" << std::endl;
+		std::cout << TXT_BIPRP << "Rank " << rank << " received from broadcast: nn = " << *nn << " - mm = " << *mm << " - nFolds = " << *nFolds << TXT_NORML << std::endl;
 	}
 	if ((rank == 0) & (MPIverbose)) {
-		std::cout << "\033[35;1mBroadcasting global variables complete.\033[0m" << std::endl;
+		std::cout << TXT_BIPRP << "Broadcasting global variables complete." << TXT_NORML << std::endl;
 	}
 }
 

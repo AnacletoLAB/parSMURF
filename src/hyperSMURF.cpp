@@ -42,11 +42,11 @@ void hyperSMURF::initStandard() {
 	inInternalCV	= false;
 	forestDirname	= commonParams->forestDirname;
 
-	if (verboseLevel > VERBSILENT) std::cout << "\033[94;1mComputing training and test partitions" << TXT_NORML << std::endl;
+	if (verboseLevel > VERBSILENT) std::cout << TXT_BIBLU << "Computing training and test partitions" << TXT_NORML << std::endl;
 	ttd = new TestTrainDivider( foldManager, wmode );
 	if (verboseLevel == VERBALL) ttd->verbose();
 
-	if (verboseLevel > VERBSILENT) std::cout << "\033[94;1mComputing partitions" << TXT_NORML << std::endl;
+	if (verboseLevel > VERBSILENT) std::cout << TXT_BIBLU << "Computing partitions" << TXT_NORML << std::endl;
 	part = new Partition( foldManager, ttd, nPart, fp, ratio, mm, nn );
 }
 
@@ -112,7 +112,7 @@ bool hyperSMURF::parametersOptimizer( uint32_t foldToJump ) {
 		while (std::getline( resultFile, fileLine )) {
 			if (fileLine[0] == 'P') {
 				GridParams tempGridParam;
-				std::vector<std::string> splittedStr = split_str( fileLine );
+				std::vector<std::string> splittedStr = split_str( fileLine, " " );
 
 				std::cout << "Params read: " << splittedStr[2] << " " << splittedStr[3] << " " << splittedStr[4] << " "
 					<< splittedStr[5] << " " << splittedStr[6] << " " << splittedStr[7] << std::endl;
@@ -156,12 +156,12 @@ void hyperSMURF::smurfIt() {
 	std::vector<std::string> nomi = generateRandomName( mm + 1 );
 	nomi[mm] = std::string( "Labels" );
 
-        uint32_t startingFold = 0;
-        uint32_t endingFold = nFolds;
-        if ((!inInternalCV) && (commonParams->minFold != -1))
-                startingFold = commonParams->minFold;
-        if ((!inInternalCV) && (commonParams->maxFold != -1))
-                endingFold = commonParams->maxFold;
+	uint32_t startingFold = 0;
+	uint32_t endingFold = nFolds;
+	if ((!inInternalCV) && (commonParams->minFold != -1))
+		startingFold = commonParams->minFold;
+	if ((!inInternalCV) && (commonParams->maxFold != -1))
+		endingFold = commonParams->maxFold;
 
 	// CROSS-VALIDATION AND TRAIN
 	if ((wmode == MODE_CV) | (wmode == MODE_TRAIN)) {
@@ -251,6 +251,7 @@ void hyperSMURF::smurfIt() {
 
 			#pragma omp parallel
 			{
+				std::vector<std::string> nomiPriv = nomi;
 				#pragma omp for
 				for (int32_t currentPart = 0; currentPart < nPart; currentPart++) {
 
@@ -278,10 +279,10 @@ void hyperSMURF::smurfIt() {
 						//if (verboseLevel == VERBALL) samp.verbose();
 					}
 
-					std::vector<std::string> nomiPriv = nomi;	// this is inefficient
 					nomiPriv[mm] = "Labels";
-					std::vector<double> trngDataCopy( part->maxSize * (mm + 1) );
-					memcpy( trngDataCopy.data(), samp.trngData, part->maxSize * (mm + 1) * sizeof(double) );
+
+					std::vector<double> trngDataCopy( samp.lineLen * (mm + 1) );
+					transposeMatrix(trngDataCopy.data(), samp.trngData, samp.lineLen, mm + 1);
 					std::unique_ptr<Data> input_data( new DataDouble( trngDataCopy, nomiPriv, samp.trngSize, mm + 1 ) );
 
 					// train the random forest...
@@ -309,8 +310,8 @@ void hyperSMURF::smurfIt() {
 					if (wmode == MODE_CV) {
 						samp.copyTestSet( x.data() );
 						nomiPriv[mm] = "dependent";
-						std::vector<double> testDataCopy( (foldManager->maxPos + foldManager->maxNeg) * (mm + 1) );
-						memcpy( testDataCopy.data(), samp.testData, (foldManager->maxPos + foldManager->maxNeg) * (mm + 1) * sizeof(double) );
+						std::vector<double> testDataCopy( samp.testSize * (mm + 1) );
+						transposeMatrix(testDataCopy.data(), samp.testData, samp.testSize, mm + 1);
 						std::unique_ptr<Data> test_data( new DataDouble( testDataCopy, nomiPriv, samp.testSize, mm + 1 ) );
 
 						#pragma omp critical
@@ -356,6 +357,13 @@ void hyperSMURF::smurfIt() {
 			//// Print AUROC and AUPRC for the current fold over the set of best parameters
 			// This should be disabled (or optimized) if performance is an issue
 			if ((wmode == MODE_CV) | (wmode == MODE_TRAIN)) {
+				{
+					// Average of the auroc and auprc on the training set
+					trainingAuroc /= nPart;
+					trainingAuprc /= nPart;
+					std::cout << TXT_BICYA << "Avg metrics on training set -->> AUROC: " << trainingAuroc << " -- AUPRC: " << trainingAuprc << TXT_NORML << std::endl;
+				}
+
 				size_t tempSize = ttd->testNegNum[currentFold] + ttd->testPosNum[currentFold];
 				std::vector<uint32_t> tempLabels(tempSize);
 				std::vector<double> tempPreds(tempSize);
@@ -368,9 +376,6 @@ void hyperSMURF::smurfIt() {
 					tempLabels[tempIdx] = y[val];
 					tempPreds[tempIdx++] = class1Prob[val];
 				});
-				// Averaging
-				double divider = 1.0 / (double) nPart;
-				std::for_each( tempPreds.begin(), tempPreds.end(), [divider]( double &nnn ) mutable { nnn *= divider; } );
 
 				// evaluate auroc and auprc
 				Curves evalauprc(tempLabels, tempPreds.data());
@@ -415,8 +420,8 @@ void hyperSMURF::smurfIt() {
 				samp.copyTestSet( x.data() );
 				nomiPriv[mm] = "dependent";
 				std::string forestFilename = forestDirname + "/" + std::to_string( currentPart ) + ".out.forest";
-				std::vector<double> testDataCopy( (foldManager->maxPos + foldManager->maxNeg) * (mm + 1) );
-				memcpy( testDataCopy.data(), samp.testData, (foldManager->maxPos + foldManager->maxNeg) * (mm + 1) * sizeof(double) );
+				std::vector<double> testDataCopy( samp.testSize * (mm + 1) );
+				transposeMatrix(testDataCopy.data(), samp.testData, samp.testSize, mm + 1);
 				std::unique_ptr<Data> test_data( new DataDouble( testDataCopy, nomiPriv, samp.testSize, mm + 1 ) );
 				rfRanger rfTest( forestFilename, mm, true, std::move(test_data), numTrees, mtry, rfThr, seedCustom );
 				rfTest.predict( rfVerbose );
@@ -433,7 +438,7 @@ void hyperSMURF::smurfIt() {
 					if (verboseLevel > VERBSILENT) std::cout << "      Accumulating" << TXT_NORML << std::endl;
 				}
 				omp_set_lock( &accumulLock );
-					samp.accumulateResInProbVect( predictions, class1Prob, class2Prob );
+					samp.accumulateAndDivideResInProbVect( predictions, class1Prob, class2Prob, nPart );
 				omp_unset_lock( &accumulLock );
 
 			}
@@ -446,7 +451,7 @@ void hyperSMURF::smurfIt() {
 			std::cout << TXT_BIPRP;
 		else
 			std::cout << TXT_BIBLU;
-		if (verboseLevel > VERBSILENT) std::cout << "Computing the average" << TXT_NORML << std::endl;
+		if (verboseLevel > VERBSILENT) std::cout << "Evaluating AUPRC" << TXT_NORML << std::endl;
 
 		if (inInternalCV) {
 			size_t	tempSize = 0;
@@ -468,10 +473,6 @@ void hyperSMURF::smurfIt() {
 					tempPreds[tempIdx++] = class1Prob[val];
 				});
 			}
-			// Averaging
-			std::cout << "nPart: " << nPart << std::endl;
-			double divider = 1.0 / (double) nPart;
-			std::for_each( tempPreds.begin(), tempPreds.end(), [divider]( double &nnn ) mutable { nnn *= divider; } );
 
 			// evaluate auroc and auprc
 			Curves evalauprc(tempLabels, tempPreds.data());
@@ -480,7 +481,6 @@ void hyperSMURF::smurfIt() {
 			std::cout << "AUROC: " << gridParams[idxInGridParams].auroc << " - AUPRC: " << gridParams[idxInGridParams].auprc
 				<< TXT_NORML << std::endl;
 		} else {
-			// Accumulate: no more, since it has been incorporated in sampler::accumulateAndDivideResInProbVect
 			Curves evalauprc(y, class1Prob);
 			// BUG: Do not invert evalAUROC_ok() and evalAUPRC()...
 			double auroc = evalauprc.evalAUROC_ok();

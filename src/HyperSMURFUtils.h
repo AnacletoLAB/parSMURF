@@ -70,7 +70,10 @@ std::vector<std::string> generateRandomName( const int n );
 void generateRandomSet( const uint32_t n, const uint32_t m, std::vector<double>& x, std::vector<uint32_t>& y, const double prob, const uint32_t seed );
 void saveToFile( const double * const cl1, const double * const cl2, const uint32_t nn,
 		const std::vector<uint32_t> * const labels, std::string outFilename );
-std::vector<std::string>	split_str( std::string s );
+std::vector<std::string> split_str( std::string s, std::string delimiters );
+void printData(const double * const xx, const uint32_t * const yy, const size_t nn, const size_t mm, const bool printLabels );
+void transposeMatrix(double * const dst, const double * const src, const size_t nn, const size_t mm);
+void checkLoggerConfFile();
 
 template <typename T>
 inline void checkPtr( T * pointer, const char * file, int line ) {

@@ -38,7 +38,7 @@ void hyperSMURF_MPI::initStandard() {
 	forestDirname	= commonParams->forestDirname;
 
 	if (rank == 0) {
-		if (verboseLevel > VERBSILENT) std::cout << "\033[94;1mComputing training and test partitions" << TXT_NORML << std::endl;
+		if (verboseLevel > VERBSILENT) std::cout << TXT_BIBLU << "Computing training and test partitions" << TXT_NORML << std::endl;
 		ttd = new TestTrainDivider( foldManager, wmode );
 		if (verboseLevel == VERBALL) ttd->verbose();
 	}
@@ -124,7 +124,7 @@ bool hyperSMURF_MPI::parametersOptimizer( uint32_t foldToJump ) {
 		while (std::getline( resultFile, fileLine )) {
 			if (fileLine[0] == 'P') {
 				GridParams tempGridParam;
-				std::vector<std::string> splittedStr = split_str( fileLine );
+				std::vector<std::string> splittedStr = split_str( fileLine, " " );
 
 				std::cout << "Rank " << rank << ": params read: " << splittedStr[2] << " " << splittedStr[3] << " " << splittedStr[4] << " "
 					<< splittedStr[5] << " " << splittedStr[6] << " " << splittedStr[7] << std::endl;
@@ -288,10 +288,10 @@ void hyperSMURF_MPI::smurfIt() {
 		std::vector<PartitionMPI> partMPI;
 		uint32_t ack = 0;
 
-		uint32_t	testSize;		// # esempi in testset (== lunghezza della linea della matrice)
-		uint32_t	trngMaxSize;	// # esempi massimo in trng set
-		uint32_t	testDataSize;	// dimensione della matrice test (== (testSize * (m+1)))
-		uint32_t	trngDataSize;	// dimensione della matrice trng (== (trngSize * (m+1) + header))
+		uint32_t	testSize;		// # of samples in the test set
+		uint32_t	trngMaxSize;	// # of samples in the trng set
+		uint32_t	testDataSize;	// test matrix size (== (testSize * (m+1)))
+		uint32_t	trngDataSize;	// trng matrix size (== (trngSize * (m+1) + header))
 		double	*	testData = nullptr;
 		double	*	tempProb1 = nullptr;
 		double	*	tempProb2 = nullptr;
@@ -316,7 +316,7 @@ void hyperSMURF_MPI::smurfIt() {
 
 		// Broadcasting sizes...
 		if ((rank == 0) & (verboseMPI)) {
-			std::cout << "\033[35;1mBroadcasting: testSize = " << testSize << " - trngMaxSize = " << trngMaxSize << ".\033[0m" << std::endl;
+			std::cout << "\033[35;1mBroadcasting: testSize = " << testSize << " - trngMaxSize = " << trngMaxSize << TXT_NORML << std::endl;
 		}
 		MPI_Barrier( MPI_COMM_WORLD );
 		MPI_Bcast( &testSize, 1, MPI_UNSIGNED, 0, MPI_COMM_WORLD );
@@ -367,7 +367,7 @@ void hyperSMURF_MPI::smurfIt() {
 		// Broadcasting testData...
 		if ((wmode == MODE_CV) | (wmode == MODE_PREDICT)) {
 			if ((rank == 0) & (verboseMPI)) {
-				std::cout << "\033[35;1mBroadcasting: testData matrix for total size: " << testDataSize << ".\033[0m" << std::endl;
+				std::cout << "\033[35;1mBroadcasting: testData matrix for total size: " << testDataSize << TXT_NORML << std::endl;
 			}
 			if (!inInternalCV)
 				LOG(TRACE) << TXT_BIBLU << "rank: " << rank << " Broadcasting testData for testDataSize= " << testDataSize << TXT_NORML;
@@ -492,7 +492,7 @@ void hyperSMURF_MPI::smurfIt() {
 
 				for (uint32_t i = 0; i < MpiH->numberOfThreadsPerProc; ++i) {
 					if (verboseMPI) {
-						std::cout << "\033[35;1mrank: " << rank << " starting thread: " << i << ".\033[0m" << std::endl;
+						std::cout << "\033[35;1mrank: " << rank << " starting thread: " << i << TXT_NORML << std::endl;
 					}
 					if (!inInternalCV)
 						LOG(TRACE) << TXT_BIBLU << "rank: " << rank << " Starting receiver thread " << i << TXT_NORML;
@@ -534,12 +534,12 @@ void hyperSMURF_MPI::smurfIt() {
 						partMPI[currentPart].assignedToChunk = j;
 
 						if (verboseMPI) {
-							std::cout << "\033[35;1mSend partition number " << currentPart << " to process: " << partMPI[currentPart].assignedToChunk + 1 << ".\033[0m" << std::endl;
+							std::cout << "\033[35;1mSend partition number " << currentPart << " to process: " << partMPI[currentPart].assignedToChunk + 1 << TXT_NORML << std::endl;
 						}
 						MPI_Send( &currentPart, 1, MPI_UNSIGNED, partMPI[currentPart].assignedToChunk + 1, 0, MPI_COMM_WORLD );
 						MPI_Recv( &ack, 1, MPI_UNSIGNED, partMPI[currentPart].assignedToChunk + 1, MPI_ANY_TAG, MPI_COMM_WORLD, &ackStatus );
 						if (verboseMPI) {
-							std::cout << "\033[35;1mMaster proc received ack for part " << ack << " from process: " << partMPI[currentPart].assignedToChunk + 1 << ".\033[0m" << std::endl;
+							std::cout << "\033[35;1mMaster proc received ack for part " << ack << " from process: " << partMPI[currentPart].assignedToChunk + 1 << TXT_NORML << std::endl;
 						}
 					}
 				}
@@ -585,7 +585,7 @@ void hyperSMURF_MPI::smurfIt() {
 			}
 			MPI_Barrier( MPI_COMM_WORLD );
 			if ((rank == 0) & (verboseMPI)) {
-				std::cout << "\033[35;1mGathering tempProb1: size: " << testSize << ".\033[0m" << std::endl;
+				std::cout << "\033[35;1mGathering tempProb1: size: " << testSize << TXT_NORML << std::endl;
 			}
 			if (!inInternalCV)
 				LOG(TRACE) << TXT_BIBLU << "rank: " << rank << " Gathering in class1ProbGath " << TXT_NORML;
@@ -594,7 +594,7 @@ void hyperSMURF_MPI::smurfIt() {
 			MPI_Gather( tempProb1, testSize, MPI_DOUBLE, class1ProbGath, testSize, MPI_DOUBLE, 0, MPI_COMM_WORLD );
 			MPI_Barrier( MPI_COMM_WORLD );
 			if ((rank == 0) & (verboseMPI)) {
-				std::cout << "\033[35;1mGathering tempProb2: size: " << testSize << ".\033[0m" << std::endl;
+				std::cout << "\033[35;1mGathering tempProb2: size: " << testSize << TXT_NORML << std::endl;
 			}
 			if (!inInternalCV)
 				LOG(TRACE) << TXT_BIBLU << "rank: " << rank << " Gathering in class2ProbGath " << TXT_NORML;
@@ -603,7 +603,7 @@ void hyperSMURF_MPI::smurfIt() {
 			MPI_Gather( tempProb2, testSize, MPI_DOUBLE, class2ProbGath, testSize, MPI_DOUBLE, 0, MPI_COMM_WORLD );
 			MPI_Barrier( MPI_COMM_WORLD );
 			if ((rank == 0) & (verboseMPI)) {
-				std::cout << "\033[35;1mGathering complete.\033[0m" << std::endl;
+				std::cout << "\033[35;1mGathering complete." << TXT_NORML << std::endl;
 			}
 			if (rank == 0) {
 				if (!inInternalCV)
@@ -635,7 +635,7 @@ void hyperSMURF_MPI::smurfIt() {
 
 				// Scale predictions
 				double divider = 1.0 / (double)nPart;
-				std::cout << "Scaling predictions - nPart: " << nPart << std::endl;
+				//std::cout << "Scaling predictions - nPart: " << nPart << std::endl;
 				for (uint32_t i = 0; i < partMPI[0].testPosNum; i++) {
 					class1Prob[partMPI[0].testPos[i]] *= divider;
 					class2Prob[partMPI[0].testPos[i]] *= divider;
@@ -655,7 +655,7 @@ void hyperSMURF_MPI::smurfIt() {
 		}
 	}
 
-	// ...and average
+	// ...and evaluating final auprc
 	if (rank == 0) {
 		if ((wmode == MODE_CV) | (wmode == MODE_PREDICT)) {
 			if ((rank == 0) && (verboseLevel > VERBSILENT)) {
@@ -663,7 +663,7 @@ void hyperSMURF_MPI::smurfIt() {
 					std::cout << TXT_BIPRP;
 				else
 					std::cout << TXT_BIBLU;
-				std::cout << "\033[94;1mComputing the average\033[0m" << std::endl;
+				std::cout << "\033[94;1mEvaluating AUPRC" << TXT_NORML << std::endl;
 			}
 
 
@@ -689,7 +689,7 @@ void hyperSMURF_MPI::smurfIt() {
 						tempPreds[tempIdx++] = class1Prob[val];
 					});
 				}
-				
+
 				// evaluate auroc and auprc
 				Curves evalauprc(tempLabels, tempPreds.data());
 				gridParams[idxInGridParams].auroc = evalauprc.evalAUROC_ok();
@@ -697,11 +697,6 @@ void hyperSMURF_MPI::smurfIt() {
 				std::cout << "AUROC: " << gridParams[idxInGridParams].auroc << " - AUPRC: " << gridParams[idxInGridParams].auprc << std::endl;
 
 			} else {
-				////  Removed, since now averaging is done by fold
-				// LOG(TRACE) << TXT_BIBLU << "rank: " << rank << " Accumulating results: averaging" << TXT_NORML;
-				// double divider = 1.0 / (double)nPart;
-				// std::for_each( class1Prob, class1Prob + nn, [divider]( double &nnn ) mutable { nnn *= divider; } );
-				// std::for_each( class2Prob, class2Prob + nn, [divider]( double &nnn ) mutable { nnn *= divider; } );
 				Curves evalauprc(y, class1Prob);
 				// BUG: Do not invert evalAUROC_ok() and evalAUPRC()...
 				double auroc = evalauprc.evalAUROC_ok();
