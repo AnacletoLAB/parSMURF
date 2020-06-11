@@ -62,6 +62,8 @@ private:
 	uint32_t									mtry;
 	uint32_t									seed;
 	uint32_t									verboseLevel;
+	uint32_t									trainingAuroc;
+	uint32_t									trainingAuprc;
 	std::string									outfilename;
 	std::string									timeFilename;
 	std::string									forestDirname;
