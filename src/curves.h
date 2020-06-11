@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <cmath>
+#include <cmath>		// TODO: this may not work with Intel compilers. Temporary comment this line if compiling fails
 
 class Curves {
 public:

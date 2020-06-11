@@ -357,12 +357,6 @@ void hyperSMURF::smurfIt() {
 			//// Print AUROC and AUPRC for the current fold over the set of best parameters
 			// This should be disabled (or optimized) if performance is an issue
 			if ((wmode == MODE_CV) | (wmode == MODE_TRAIN)) {
-				{
-					// Average of the auroc and auprc on the training set
-					trainingAuroc /= nPart;
-					trainingAuprc /= nPart;
-					std::cout << TXT_BICYA << "Avg metrics on training set -->> AUROC: " << trainingAuroc << " -- AUPRC: " << trainingAuprc << TXT_NORML << std::endl;
-				}
 
 				size_t tempSize = ttd->testNegNum[currentFold] + ttd->testPosNum[currentFold];
 				std::vector<uint32_t> tempLabels(tempSize);
