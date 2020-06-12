@@ -5,7 +5,9 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <cmath>		// TODO: this may not work with Intel compilers. Temporary comment this line if compiling fails
+#ifdef __GNUC__
+#include <cmath>
+#endif
 
 class Curves {
 public:
