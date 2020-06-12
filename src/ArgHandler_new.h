@@ -67,7 +67,7 @@ protected:
 		T toBeReturned;
 		bool okay = false;
 		try {
-			toBeReturned = jStrct->get_with_default( field ).as<T>();
+			toBeReturned = jStrct->at(field).as<T>();
 			okay = true;
 		} catch (const std::exception& e) {
 			std::cout << "Error while getting " << field << " from json: " << e.what() << std::endl;
