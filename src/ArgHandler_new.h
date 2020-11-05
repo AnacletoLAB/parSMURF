@@ -55,6 +55,7 @@ public:
 protected:
 	void displayHelp();
 	void printLogo();
+	void citeMe();
 	void checkConfig( int rank );
 	void checkCommonConfig( int rank );
 	void jsonImport( std::string cfgFilename );

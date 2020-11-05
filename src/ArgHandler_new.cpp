@@ -20,12 +20,13 @@ void ArgHandle::processCommandLine( int rank ) {
 	if (rank == 0)
 		printLogo();
 
-	char const *short_options = "j:u:h";
+	char const *short_options = "j:u:h:M";
 	const struct option long_options[] = {
 
 		{ "cfg",			required_argument, 0, 'j' },
 		{ "printCfg",		no_argument,       0, 'u' },
 		{ "help",			no_argument,	   0, 'h' },
+		{ "cite-me",		no_argument,	   0, 'M' },
 		{ 0, 0, 0, 0 }
 	};
 
@@ -51,6 +52,12 @@ void ArgHandle::processCommandLine( int rank ) {
 			if (rank == 0)
 				displayHelp();
 			exit( 0 );
+			break;
+		
+		case 'M':
+			if (rank == 0)
+				citeMe();
+			exit(0);
 			break;
 
 		default:
@@ -412,6 +419,23 @@ void ArgHandle::printConfig( uint32_t n, uint32_t m ) {
 	}
 }
 
+void ArgHandle::citeMe() {
+	std::cout << "@article{Petrini2020," << std::endl;
+	std::cout << "  author = {Petrini, Alessandro and Mesiti, Marco and Schubach, Max and Frasca, Marco and Danis, Daniel and Re, Matteo and Grossi, Giuliano and Cappelletti, Luca and Castrignanò, Tiziana and Robinson, Peter N and Valentini, Giorgio}," << std::endl;
+    std::cout << "  title = {parSMURF, a high-performance computing tool for the genome-wide detection of pathogenic variants}," << std::endl;
+    std::cout << "  journal = {GigaScience}," << std::endl;
+    std::cout << "  volume = {9}," << std::endl;
+    std::cout << "  number = {5}," << std::endl;
+    std::cout << "  year = {2020}," << std::endl;
+    std::cout << "  month = {05}," << std::endl;
+    std::cout << "  issn = {2047-217X}," << std::endl;
+    std::cout << "  doi = {10.1093/gigascience/giaa052}," << std::endl;
+    std::cout << "  url = {https://doi.org/10.1093/gigascience/giaa052}," << std::endl;
+    std::cout << "  note = {giaa052}," << std::endl;
+    std::cout << "  eprint = {https://academic.oup.com/gigascience/article-pdf/9/5/giaa052/33285877/giaa052.pdf}," << std::endl;
+	std::cout << "}" << std::endl;
+}
+
 void ArgHandle::printLogo() {
 	std::cout << "______________________________________________________________________" << std::endl << std::endl;
 	std::cout << "\033[38;5;214m ██████╗  █████╗ ██████╗ ███████╗███╗   ███╗██╗   ██╗██████╗ ███████╗\e[0m" << std::endl;
@@ -421,8 +445,9 @@ void ArgHandle::printLogo() {
 	std::cout << "\033[38;5;218m ██║     ██║  ██║██║  ██║███████║██║ ╚═╝ ██║╚██████╔╝██║  ██║██║\e[0m" << std::endl;
 	std::cout << "\033[38;5;218m ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝\e[0m" << std::endl;
 	std::cout << "______________________________________________________________________" << std::endl << std::endl;
-	std::cout << "      AnacletoLab - Universita' degli studi di Milano - 2018-9" << std::endl;
-	std::cout << "             http://github.com/AnacletoLAB/parSMURF" << std::endl;
+	std::cout << "       AnacletoLab - Universita' degli studi di Milano - 2018-9       " << std::endl;
+	std::cout << "                http://github.com/AnacletoLAB/parSMURF                " << std::endl;
+	std::cout << "         Use '--cite-me' command line option for citation info        " << std::endl;
 	std::cout << "______________________________________________________________________" << std::endl << std::endl;
 }
 
