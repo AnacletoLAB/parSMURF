@@ -39,8 +39,8 @@ This package contains parSMURF, a High Performance Computing imbalance-aware mac
 parSMURF is a fast and scalable C++ implementation of the HyperSMURF algorithm - hyper-ensemble of SMOTE Undersampled Random Forests - an ensemble approach explicitly designed to deal with the huge imbalance between deleterious and neutral variants.
 
 The algorithm is outlined in the following papers:\
-A. Petrini, M. Mesiti, M. Schubach, M. Frasca, D. Danis, M. Re, G. Grossi, T. Castrignanò, P. N. Robinson and G. Valentini, "parSMURF, a High Performance Computing tool for the genome-wide detection of pathogenic variants OR parSMURF, a High Performance Computing tool for supervised big data analysis in Genomic Medicine"\
-<TBD>
+A. Petrini, M. Mesiti, M. Schubach, M. Frasca, D. Danis, M. Re, G.Grossi, L. Cappelletti, T. Castrignanò, P. N. Robinson, and G. Valentini,  "parSMURF, a high-performance computing tool for the genome-wide detection of pathogenic variants",  GigaScience, vol. 9, 05 2020. giaa052.
+https://doi.org/10.1093/gigascience/giaa052
 
 Schubach, Matteo Re, Peter N. Robinson & Giorgio Valentini, "Imbalance-Aware Machine Learning for Predicting Rare and Common Disease-Associated Non-Coding Variants", Scientific Reports, 2017/06/07\
 https://www.nature.com/articles/s41598-017-03011-5
@@ -648,38 +648,28 @@ Every sub-field is mandatory. If the user needs to perform a partial search (i.e
 As previously stated, data is provided to the application in two or three files.
 
 ##### Data file
-this file should contain the main data needed for computing the predictions. It consists in an n x m matrix of double, where n is the number of examples and m the features. The matrix is read column-wise, i.e. :
+this file should contain the main data needed for computing the predictions. It consists in an n x m matrix of double, where n is the number of examples and m the features. The matrix is read row-wise, i.e. :
 ```
    | m1   m2   m3   m4 ...
 ---------------------------
-n1 |  |
-n2 |  |
-n3 |  |
-n4 | \ /                        ( 1 )
-.  |  v
+n1 | ------------>
+n2 | ------------>
+n3 |
+n4 |
+.  |
 .  |
 .  |
 ```
-Hence, the data file should be ordered so that the first line contains all the examples for the first feature, the second line the examples for the second feature, and so on.\
-parSMURF1 and parSMURFn accepts data files in two different formats:
-- plain text file: n x m space (or tab, comma, etc...) separated values
-- binary file: binary encoded n x m values
-Binary file format is highly recommended, since it is 5 to 10 times faster than parsing a plain text file. Data file must have a ".bin" extension so that parSMURF1 and parSMURFn import the data files in this mode.
+Most, if not any, datafile is in this format, so just be sure that the number of features for each row is consistent across the samples.\
+The number of features is detected from the file itself - actually, from the number of items read in the first row.\
+All input files must be HEADERLESS.
 
-The following code snippet converts a R matrix (called "data") in a binary file for proper use with this package, provided that the matrix is as in the example ( 1 ):
-```
-outfile <- file( "binaryDataFile.bin", "wb" )
-for (i in 1:ncol( data )) {
-    dataColumn = data[,i]
-	writeBin( dataColumn, outfile )
-}
-```
 ##### Label file
-this file should contain the labelling of the examples. It consists in n space or tab separated values, where n is the number of examples.\
+this file should contain the labelling of the examples. It consists in n space or tab separated values, where n is the number of examples. It can also be a column vector file, i.e. newline separated values.\
 It is a plain text file where each positive example is marked with "1" and negative examples with "0".
 
 ##### Fold file
-this optional file should contain the fold sub division. If specified, examples will be divided in folds as specified in this file. If not, a random stratified division will be performed. This file consists in n space or tab separated integer values, where n is the number of examples.\
+this optional file should contain the fold sub division. If specified, examples will be divided in folds as specified in this file. If not, a random stratified division will be performed. This file consists in n space or tab separated integer values, where n is the number of examples. It can also be a column vector file, i.e. newline separated values.\
 It is a plain text file where each number represents the fold to which each example is assigned. Fold numbering starts from "0" (zero).
 Note that specifying the fold file name overrides the "nFolds" option in the ocnfiguration file.
 
@@ -690,13 +680,12 @@ write(vectorOfFolds, file = "folds.txt", sep = "\n")
 ```
 ##### Output file
 Predictions will be saved as plain text file.\
-The output file consists of two lines of n space separated double values, where n is the number of examples.\
-Each value in the first line represents the probability of the associated example to be in the minority class, while each value in the second line, the probability to be in the majority class.
+The output file consists of two columns of tab separated double values. For each sample, both probabilities of belonging to either class is saved: each value in the first column represents the probability of the associated sample to be in the minority class, while each value in the second column, the probability to be in the majority class.
 
 Note about dimensionality:\
-When reading data from file, parSMURF1 and parSMURFn automatically detect the number of examples and features, following these rules:
-- at first, the number of examples is detected from the label file.
-- then, the number of features is detected from the data file and calculated as number of (elements read in the data file) / (number of labels).
+When reading data from file, parSMURF1 and parSMURFn automatically detect the number of samples and features, following these rules:
+- at first, the number of samples is detected from the label file.
+- then, the number of features is detected from the data file, evaluating the number of different items from hte first row of the data file.
 Hence, the sizes of these files should be consistent, otherwise a warning message is printed to the console.\
 Also, the number of folds is detected from the fold file if specified. In this case, the option "nFolds" in the configuration file is ignored, and the total number of folds will be equal to the number of the total unique elements of the fold file.
 
@@ -708,7 +697,7 @@ parSMURF1 and parSMURFn are provided with a random dataset generator for testing
 When enabled, a random dataset will be created according to two normal distribution having the same variance but different average value, depending if an example falls in the positive or negative class.\
 The user enables this mode by using the `"simulate: true"` option in the configuration file.\
 The user is also forced to specify the the probability that an example belongs to the minority class (`"prob": float`) and dimensionality of the dataset with the `"n": float` and `"m": int` options.\
-An additional line will be added to the output file, containing the labelling that has been randomly generated according to the `"prob"` value.
+An additional column will be added to the output file, containing the labelling that has been randomly generated according to the `"prob"` value.
 
 ---
 
