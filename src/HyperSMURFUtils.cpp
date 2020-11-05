@@ -50,12 +50,19 @@ void saveToFile( const double * const cl1, const double * const cl2, const uint3
 		const std::vector<uint32_t> * const labels, std::string outFilename ) {
 
 	std::ofstream outFile( outFilename.c_str(), std::ios::out );
+	/*
 	std::for_each( cl1, cl1 + nn, [&outFile]( double nnn ) { outFile << nnn << " "; } );
 	outFile << std::endl;
 	std::for_each( cl2, cl2 + nn, [&outFile]( double nnn ) { outFile << nnn << " "; } );
 	outFile << std::endl;
 	if (!labels->empty()) {
 		for_each( labels->begin(), labels->end(), [&outFile]( uint32_t nnn ) { outFile << nnn << " "; } );
+		outFile << std::endl;
+	}*/
+	for (size_t i = 0; i < nn; i++) {
+		outFile << cl1[i] << "\t" << cl2[i];
+		if (!labels->empty())
+			outFile << "\t" << (*labels)[i];
 		outFile << std::endl;
 	}
 	outFile.close();
