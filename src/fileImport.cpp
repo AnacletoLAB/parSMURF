@@ -61,11 +61,13 @@ void Importer::import( const ArgHandle * const argHan, std::vector<double>& x, s
 	std::cout << TXT_BIBLU << "Detecting the number of features from data..." << TXT_NORML << std::endl;
 	// Get the length of the first line
 	char c;
+	con = 0;
 	while (dataFile.get(c)) {
 		con++;
 		if (c == '\n')
 			break;
 	}
+
 	// Allocate a buffer and read the first line in its entirety
 	char buffer[con];
 	dataFile.seekg (0, dataFile.beg);
