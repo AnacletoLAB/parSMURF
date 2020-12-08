@@ -21,7 +21,7 @@ rfRanger::rfRanger( const uint32_t m, const bool prediction_mode, std::unique_pt
 		prediction_mode( prediction_mode ),
 		sample_with_replacement( true ),
 		memory_saving_splitting( false ),
-		importance_mode( IMP_NONE ),
+		importance_mode( IMP_PERM_RAW ),
 		splitrule( LOGRANK ),
 		status_variable_name("none"),
 		keep_inbag( false ),
@@ -71,7 +71,7 @@ rfRanger::rfRanger( Forest * inForest, const uint32_t m, const bool prediction_m
 		prediction_mode( prediction_mode ),
 		sample_with_replacement( true ),
 		memory_saving_splitting( false ),
-		importance_mode( IMP_NONE ),
+		importance_mode( IMP_PERM_RAW ),
 		splitrule( LOGRANK ),
 		status_variable_name("status"),
 		keep_inbag( false ),
@@ -136,7 +136,7 @@ rfRanger::rfRanger( std::string forestFilename, const uint32_t m, const bool pre
 		prediction_mode( prediction_mode ),
 		sample_with_replacement( true ),
 		memory_saving_splitting( false ),
-		importance_mode( IMP_NONE ),
+		importance_mode( IMP_PERM_RAW ),
 		splitrule( LOGRANK ),
 		status_variable_name("status"),
 		keep_inbag( false ),
@@ -169,9 +169,6 @@ rfRanger::rfRanger( std::string forestFilename, const uint32_t m, const bool pre
 
 }
 
-
-
-
 rfRanger::~rfRanger() {
 	if (forest != nullptr ) delete forest;
 	if (forestPred != nullptr ) delete forestPred;
@@ -203,5 +200,10 @@ void rfRanger::saveForest( uint32_t nPart, std::string forestDirname ) {
 
 	std::cout << "saving " << forest->output_prefix << " trained forest" << std::endl;
 	forest->saveToFile();
+}
 
+void rfRanger::saveImportance( uint32_t nPart, std::string forestDirname ) {
+	forest->output_prefix = forestDirname + std::string( "/" ) + std::to_string( nPart ) + std::string( ".out" );
+	std::cout << "saving " << forest->output_prefix << " variable importance" << std::endl;
+	forest->writeImportanceFile();
 }

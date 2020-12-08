@@ -20,6 +20,23 @@ std::vector<std::string> generateRandomName( const int n ) {
 	return out;
 }
 
+std::vector<std::string> generateOrderedNames( const int n ) {
+	std::vector<std::string> out(n);
+	const int slen = 8;
+	std::ostringstream ss;
+
+	for (int i = 0; i < n; i++) {
+	    ss.str(std::string());
+	    int32_t expp;
+	    i != 0 ? expp = (uint32_t) log10(i) : expp = 0;
+		for (int o = 7; o > expp; o--)
+			ss << "0";
+		ss << std::to_string(i);
+		out[i] = ss.str();
+	}
+	return out;
+}
+
 void generateRandomSet( const uint32_t nn, const uint32_t mm, std::vector<double>& xx, std::vector<uint32_t>& yy, const double prob, const uint32_t seed ) {
 	std::default_random_engine gen( seed );
 	std::normal_distribution<> disxNeg( 0, 1 );

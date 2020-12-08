@@ -28,6 +28,7 @@ public:
 	void train( bool verbose );
 	void predict( bool verbose );
 	void saveForest( uint32_t nPart, std::string forestDirname );
+	void saveImportance( uint32_t nPart, std::string forestDirname );
 
 	Forest							*	forest;
 	ForestProbability				*	forestPred;

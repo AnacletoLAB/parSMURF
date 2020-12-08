@@ -153,8 +153,13 @@ void hyperSMURF::smurfIt() {
 		tempcl1Prob = new double[nn];
 		tempcl2Prob = new double[nn];
 	}
-	std::vector<std::string> nomi = generateRandomName( mm + 1 );
+	//std::vector<std::string> nomi = generateRandomName( mm + 1 );
+	std::vector<std::string> nomi = generateOrderedNames( mm + 1 );
 	nomi[mm] = std::string( "Labels" );
+
+	//for (size_t o = 0; o < nomi.size(); o++)
+	//	std::cout << nomi[o] << " ";
+	//std::cout << std::endl;
 
 	uint32_t startingFold = 0;
 	uint32_t endingFold = nFolds;
@@ -351,6 +356,7 @@ void hyperSMURF::smurfIt() {
 							if (verboseLevel > VERBSILENT) std::cout << "      Saving RF..." << TXT_NORML << std::endl;
 						}
 						rf.saveForest( currentPart, forestDirname );
+						rf.saveImportance( currentPart, forestDirname );
 					}
 				}
 			}

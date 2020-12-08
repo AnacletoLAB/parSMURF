@@ -7,9 +7,11 @@
 #include <algorithm>
 #include <random>
 #include <cinttypes>
+#include <cmath>
 #include <fstream>
 #include <chrono>
 #include <iostream>
+#include <sstream>
 
 // some useful labelling...
 enum verbLvl {
@@ -67,6 +69,7 @@ struct CommonParams {
 
 // Various utility functions
 std::vector<std::string> generateRandomName( const int n );
+std::vector<std::string> generateOrderedNames( const int n );
 void generateRandomSet( const uint32_t n, const uint32_t m, std::vector<double>& x, std::vector<uint32_t>& y, const double prob, const uint32_t seed );
 void saveToFile( const double * const cl1, const double * const cl2, const uint32_t nn,
 		const std::vector<uint32_t> * const labels, std::string outFilename );
